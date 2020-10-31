@@ -22,6 +22,7 @@ import io.seata.core.exception.TransactionException;
  *
  * @author sharajava
  */
+//resourceManager 出站
 public interface ResourceManagerOutbound {
 
     /**
@@ -36,6 +37,7 @@ public interface ResourceManagerOutbound {
      * @return the long
      * @throws TransactionException the transaction exception
      */
+    //分支事务注册
     Long branchRegister(BranchType branchType, String resourceId, String clientId, String xid, String applicationData, String lockKeys) throws
         TransactionException;
 
@@ -49,6 +51,7 @@ public interface ResourceManagerOutbound {
      * @param applicationData the application data
      * @throws TransactionException the transaction exception
      */
+    //分支事务上报
     void branchReport(BranchType branchType, String xid, long branchId, BranchStatus status, String applicationData) throws TransactionException;
 
     /**
@@ -61,6 +64,7 @@ public interface ResourceManagerOutbound {
      * @return the boolean
      * @throws TransactionException the transaction exception
      */
+    //lock 查询
     boolean lockQuery(BranchType branchType, String resourceId, String xid, String lockKeys)
         throws TransactionException;
 }

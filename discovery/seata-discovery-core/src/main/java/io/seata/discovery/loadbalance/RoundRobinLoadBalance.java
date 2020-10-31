@@ -15,16 +15,17 @@
  */
 package io.seata.discovery.loadbalance;
 
+import io.seata.common.loader.LoadLevel;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import io.seata.common.loader.LoadLevel;
 
 /**
  * The type Round robin load balance.
  *
  * @author slievrly
  */
+//负载 轮训
 @LoadLevel(name = "RoundRobinLoadBalance", order = 1)
 public class RoundRobinLoadBalance extends AbstractLoadBalance {
 

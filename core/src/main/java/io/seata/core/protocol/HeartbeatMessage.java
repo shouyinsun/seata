@@ -22,9 +22,10 @@ import java.io.Serializable;
  *
  * @author slievrly
  */
+//心跳消息 ping pong
 public class HeartbeatMessage implements Serializable {
     private static final long serialVersionUID = -985316399527884899L;
-    private boolean ping = true;
+    private boolean ping ;
     /**
      * The constant PING.
      */

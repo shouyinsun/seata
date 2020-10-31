@@ -22,6 +22,7 @@ import io.seata.common.exception.NotSupportYetException;
  *
  * @author slievrly
  */
+//注册发现中心类型
 public enum RegistryType {
     /**
      * File registry type.

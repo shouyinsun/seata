@@ -15,11 +15,6 @@
  */
 package io.seata.saga.engine.impl;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
-
 import io.seata.saga.engine.StateMachineConfig;
 import io.seata.saga.engine.evaluation.EvaluatorFactoryManager;
 import io.seata.saga.engine.evaluation.exception.ExceptionMatchEvaluatorFactory;
@@ -60,6 +55,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * Default state machine configuration
  *
@@ -87,6 +87,7 @@ public class DefaultStateMachineConfig implements StateMachineConfig, Applicatio
 
     private Resource[] resources = new Resource[0];
     private String charset = "UTF-8";
+    //默认tenantId
     private String defaultTenantId = "000001";
 
     protected void init() throws Exception {

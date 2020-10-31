@@ -24,7 +24,7 @@ import io.seata.saga.proctrl.ProcessContext;
  * @author jin.xie
  * @author lorne.cl
  */
-public interface BusinessProcessor {
+public interface BusinessProcessor {//业务逻辑
 
     /**
      * process business logic
@@ -32,7 +32,7 @@ public interface BusinessProcessor {
      * @param context
      * @throws FrameworkException
      */
-    void process(ProcessContext context) throws FrameworkException;
+    void process(ProcessContext context) throws FrameworkException;//process 处理
 
     /**
      * route
@@ -40,5 +40,5 @@ public interface BusinessProcessor {
      * @param context
      * @throws FrameworkException
      */
-    void route(ProcessContext context) throws FrameworkException;
+    void route(ProcessContext context) throws FrameworkException;//路由
 }

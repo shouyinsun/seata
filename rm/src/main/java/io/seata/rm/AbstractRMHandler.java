@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author sharajava
  */
+//抽象rm处理器
 public abstract class AbstractRMHandler extends AbstractExceptionHandler
     implements RMInboundHandler, TransactionMessageHandler {
 
@@ -85,15 +86,20 @@ public abstract class AbstractRMHandler extends AbstractExceptionHandler
      * @param response the response
      * @throws TransactionException the transaction exception
      */
+    //分支事务提交
     protected void doBranchCommit(BranchCommitRequest request, BranchCommitResponse response)
         throws TransactionException {
+        //全局事务id
         String xid = request.getXid();
+        //分支事务id
         long branchId = request.getBranchId();
+        //resourceId
         String resourceId = request.getResourceId();
         String applicationData = request.getApplicationData();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Branch committing: " + xid + " " + branchId + " " + resourceId + " " + applicationData);
         }
+        //提交
         BranchStatus status = getResourceManager().branchCommit(request.getBranchType(), xid, branchId, resourceId,
             applicationData);
         response.setXid(xid);
@@ -112,6 +118,7 @@ public abstract class AbstractRMHandler extends AbstractExceptionHandler
      * @param response the response
      * @throws TransactionException the transaction exception
      */
+    //分支事务回滚
     protected void doBranchRollback(BranchRollbackRequest request, BranchRollbackResponse response)
         throws TransactionException {
         String xid = request.getXid();
@@ -121,6 +128,7 @@ public abstract class AbstractRMHandler extends AbstractExceptionHandler
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Branch Rollbacking: " + xid + " " + branchId + " " + resourceId);
         }
+        //回滚
         BranchStatus status = getResourceManager().branchRollback(request.getBranchType(), xid, branchId, resourceId,
             applicationData);
         response.setXid(xid);

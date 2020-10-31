@@ -28,6 +28,7 @@ public interface RMInboundHandler {
      * @param request the request
      * @return the branch commit response
      */
+    //handle commit
     BranchCommitResponse handle(BranchCommitRequest request);
 
     /**
@@ -36,6 +37,7 @@ public interface RMInboundHandler {
      * @param request the request
      * @return the branch rollback response
      */
+    //handle rollback
     BranchRollbackResponse handle(BranchRollbackRequest request);
 
     /**
@@ -43,5 +45,6 @@ public interface RMInboundHandler {
      *
      * @param request the request
      */
+    //handle delete undo log
     void handle(UndoLogDeleteRequest request);
 }

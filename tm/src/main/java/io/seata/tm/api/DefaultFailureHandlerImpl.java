@@ -15,8 +15,6 @@
  */
 package io.seata.tm.api;
 
-import java.util.concurrent.TimeUnit;
-
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -26,11 +24,14 @@ import io.seata.core.model.GlobalStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * The type Default failure handler.
  *
  * @author slievrly
  */
+//默认失败handle
 public class DefaultFailureHandlerImpl implements FailureHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFailureHandlerImpl.class);
@@ -38,8 +39,10 @@ public class DefaultFailureHandlerImpl implements FailureHandler {
     /**
      * Retry 1 hours by default
      */
+    //默认重试1h 360次
     private static final int RETRY_MAX_TIMES = 6 * 60;
 
+    //10s 间隔
     private static final long SCHEDULE_INTERVAL_SECONDS = 10;
 
     private static final long TICK_DURATION = 1;
@@ -56,17 +59,18 @@ public class DefaultFailureHandlerImpl implements FailureHandler {
     }
 
     @Override
-    public void onCommitFailure(GlobalTransaction tx, Throwable cause) {
+    public void onCommitFailure(GlobalTransaction tx, Throwable cause) {//commit 失败
         LOGGER.warn("Failed to commit transaction[" + tx.getXid() + "]", cause);
         timer.newTimeout(new CheckTimerTask(tx, GlobalStatus.Committed), SCHEDULE_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
     @Override
-    public void onRollbackFailure(GlobalTransaction tx, Throwable cause) {
+    public void onRollbackFailure(GlobalTransaction tx, Throwable cause) {//rollback 失败
         LOGGER.warn("Failed to rollback transaction[" + tx.getXid() + "]", cause);
         timer.newTimeout(new CheckTimerTask(tx, GlobalStatus.Rollbacked), SCHEDULE_INTERVAL_SECONDS, TimeUnit.SECONDS);
     }
 
+    //状态check 任务
     protected class CheckTimerTask implements TimerTask {
 
         private final GlobalTransaction tx;
@@ -99,6 +103,7 @@ public class DefaultFailureHandlerImpl implements FailureHandler {
         try {
             GlobalStatus status = tx.getStatus();
             LOGGER.info("transaction [{}] current status is [{}]", tx.getXid(), status);
+            //到达要求状态或Finished
             if (status == required || status == GlobalStatus.Finished) {
                 return true;
             }

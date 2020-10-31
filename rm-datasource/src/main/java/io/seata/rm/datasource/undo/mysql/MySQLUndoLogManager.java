@@ -15,11 +15,6 @@
  */
 package io.seata.rm.datasource.undo.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Date;
-
 import io.seata.common.util.BlobUtils;
 import io.seata.core.constants.ClientTableColumnsName;
 import io.seata.rm.datasource.undo.AbstractUndoLogManager;
@@ -27,6 +22,11 @@ import io.seata.rm.datasource.undo.UndoLogParser;
 import io.seata.sqlparser.util.JdbcConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * @author jsbxyyx
@@ -87,6 +87,7 @@ public class MySQLUndoLogManager extends AbstractUndoLogManager {
     private void insertUndoLog(String xid, long branchId, String rollbackCtx,
                                       byte[] undoLogContent, State state, Connection conn) throws SQLException {
         try (PreparedStatement pst = conn.prepareStatement(INSERT_UNDO_LOG_SQL)) {
+            //branch_id, xid, context, rollback_info, log_status
             pst.setLong(1, branchId);
             pst.setString(2, xid);
             pst.setString(3, rollbackCtx);

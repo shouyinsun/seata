@@ -29,12 +29,12 @@ public interface SQLUpdateRecognizer extends WhereRecognizer {
      *
      * @return the update columns
      */
-    List<String> getUpdateColumns();
+    List<String> getUpdateColumns();//更新的列
 
     /**
      * Gets update values.
      *
      * @return the update values
      */
-    List<Object> getUpdateValues();
+    List<Object> getUpdateValues();//更新的值
 }

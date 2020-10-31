@@ -15,15 +15,15 @@
  */
 package io.seata.core.rpc.netty;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import io.seata.common.util.CollectionUtils;
 import io.seata.core.rpc.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * ensure the shutdownHook is singleton
@@ -46,6 +46,7 @@ public class ShutdownHook extends Thread {
     private static final int DEFAULT_PRIORITY = 10;
 
     static {
+        //关闭钩子
         Runtime.getRuntime().addShutdownHook(SHUTDOWN_HOOK);
     }
 

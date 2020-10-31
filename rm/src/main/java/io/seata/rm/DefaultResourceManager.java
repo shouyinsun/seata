@@ -15,11 +15,6 @@
  */
 package io.seata.rm;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.seata.common.exception.FrameworkException;
 import io.seata.common.loader.EnhancedServiceLoader;
 import io.seata.common.util.CollectionUtils;
@@ -29,16 +24,23 @@ import io.seata.core.model.BranchType;
 import io.seata.core.model.Resource;
 import io.seata.core.model.ResourceManager;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * default resource manager, adapt all resource managers
  *
  * @author zhangsen
  */
+//默认资源管理器,适配所有
 public class DefaultResourceManager implements ResourceManager {
 
     /**
      * all resource managers
      */
+    //所有类型的资源管理器 branchType -> resourceManager
     protected static Map<BranchType, ResourceManager> resourceManagers
         = new ConcurrentHashMap<>();
 
@@ -67,6 +69,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     protected void initResourceManagers() {
         //init all resource managers
+        //spi 加载所有 ResourceManager
         List<ResourceManager> allResourceManagers = EnhancedServiceLoader.loadAll(ResourceManager.class);
         if (CollectionUtils.isNotEmpty(allResourceManagers)) {
             for (ResourceManager rm : allResourceManagers) {
@@ -123,6 +126,7 @@ public class DefaultResourceManager implements ResourceManager {
     public Map<String, Resource> getManagedResources() {
         Map<String, Resource> allResource = new HashMap<>();
         for (ResourceManager rm : resourceManagers.values()) {
+            //resourceId -> Resource
             Map<String, Resource> tempResources = rm.getManagedResources();
             if (tempResources != null) {
                 allResource.putAll(tempResources);

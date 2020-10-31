@@ -23,6 +23,7 @@ import io.seata.core.rpc.netty.RmRpcClient;
  *
  * @author slievrly
  */
+//rm client
 public class RMClient {
 
     /**
@@ -33,7 +34,9 @@ public class RMClient {
      */
     public static void init(String applicationId, String transactionServiceGroup) {
         RmRpcClient rmRpcClient = RmRpcClient.getInstance(applicationId, transactionServiceGroup);
+        //资源管理器
         rmRpcClient.setResourceManager(DefaultResourceManager.get());
+        //message handle监听
         rmRpcClient.setClientMessageListener(new RmMessageListener(DefaultRMHandler.get()));
         rmRpcClient.init();
     }

@@ -311,6 +311,7 @@ public class ConfigurationKeys {
     /**
      * The constant TRANSACTION_UNDO_LOG_DEFAULT_TABLE.
      */
+    //事务undo日志,默认表 undo_log
     public static final String TRANSACTION_UNDO_LOG_DEFAULT_TABLE = "undo_log";
 
     /**

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author slievrly
  */
+//rm 消息监听
 public class RmMessageListener implements ClientMessageListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RmMessageListener.class);
@@ -64,6 +65,7 @@ public class RmMessageListener implements ClientMessageListener {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("onMessage:" + msg);
         }
+        //不同 message 处理
         if (msg instanceof BranchCommitRequest) {
             handleBranchCommit(request, serverAddress, (BranchCommitRequest)msg, sender);
         } else if (msg instanceof BranchRollbackRequest) {
@@ -73,9 +75,10 @@ public class RmMessageListener implements ClientMessageListener {
         }
     }
 
+    //handle branch 事务 回滚
     private void handleBranchRollback(RpcMessage request, String serverAddress,
                                       BranchRollbackRequest branchRollbackRequest, ClientMessageSender sender) {
-        BranchRollbackResponse resultMessage = null;
+        BranchRollbackResponse resultMessage ;
         resultMessage = (BranchRollbackResponse)handler.onRequest(branchRollbackRequest, null);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("branch rollback result:" + resultMessage);
@@ -87,6 +90,7 @@ public class RmMessageListener implements ClientMessageListener {
         }
     }
 
+    //handle branch 事务 commit
     private void handleBranchCommit(RpcMessage request, String serverAddress, BranchCommitRequest branchCommitRequest,
                                     ClientMessageSender sender) {
 
@@ -105,6 +109,7 @@ public class RmMessageListener implements ClientMessageListener {
         }
     }
 
+    //undo 日志删除
     private void handleUndoLogDelete(UndoLogDeleteRequest undoLogDeleteRequest) {
         try {
             handler.onRequest(undoLogDeleteRequest, null);

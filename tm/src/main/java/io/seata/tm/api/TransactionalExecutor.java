@@ -22,6 +22,7 @@ import io.seata.tm.api.transaction.TransactionInfo;
  *
  * @author sharajava
  */
+//事务执行器
 public interface TransactionalExecutor {
 
     /**

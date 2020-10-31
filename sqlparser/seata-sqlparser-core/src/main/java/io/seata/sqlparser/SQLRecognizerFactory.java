@@ -18,6 +18,6 @@ package io.seata.sqlparser;
 /**
  * @author ggndnn
  */
-public interface SQLRecognizerFactory {
+public interface SQLRecognizerFactory {//sql识别器工厂
     SQLRecognizer create(String sql, String dbType);
 }

@@ -15,32 +15,22 @@
  */
 package io.seata.rm.datasource.sql.struct.cache;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import io.seata.common.exception.ShouldNeverHappenException;
-import io.seata.rm.datasource.sql.struct.ColumnMeta;
-import io.seata.rm.datasource.sql.struct.IndexMeta;
-import io.seata.rm.datasource.sql.struct.IndexType;
-import io.seata.rm.datasource.sql.struct.TableMeta;
-import io.seata.rm.datasource.sql.struct.TableMetaCache;
+import io.seata.rm.datasource.sql.struct.*;
 import io.seata.rm.datasource.undo.KeywordChecker;
 import io.seata.rm.datasource.undo.KeywordCheckerFactory;
-
+import io.seata.sqlparser.util.JdbcConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.seata.sqlparser.util.JdbcConstants;
+import java.sql.*;
 
 /**
  * The type Table meta cache.
  *
  * @author sharajava
  */
+//mysql 表元信息缓存
 public class MysqlTableMetaCache extends AbstractTableMetaCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlTableMetaCache.class);
@@ -76,7 +66,7 @@ public class MysqlTableMetaCache extends AbstractTableMetaCache {
         String[] tableNameWithCatalog = tableName.replace("`", "").split("\\.");
         String defaultTableName = tableNameWithCatalog.length > 1 ? tableNameWithCatalog[1] : tableNameWithCatalog[0];
 
-        DatabaseMetaData databaseMetaData = null;
+        DatabaseMetaData databaseMetaData ;
         try {
             databaseMetaData = connection.getMetaData();
         } catch (SQLException e) {

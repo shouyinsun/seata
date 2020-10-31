@@ -433,7 +433,7 @@ public class NettyClientConfig extends NettyBaseConfig {
      *
      * @return the tm dispatch thread prefix
      */
-    public String getTmDispatchThreadPrefix() {
+    public String getTmDispatchThreadPrefix() {//rpcDispatch_TMROLE
         return RPC_DISPATCH_THREAD_PREFIX + "_" + NettyPoolKey.TransactionRole.TMROLE.name();
     }
 

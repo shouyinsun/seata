@@ -15,19 +15,20 @@
  */
 package io.seata.rm.datasource.sql.struct;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.apache.commons.lang.ArrayUtils;
 
 /**
  * The type Index meta.
  *
  * @author sharajava
  */
+//索引 元信息
 public class IndexMeta {
-    private List<ColumnMeta> values = new ArrayList<ColumnMeta>();
+    private List<ColumnMeta> values = new ArrayList();
 
     private boolean nonUnique;
     private String indexQualifier;

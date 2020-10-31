@@ -18,6 +18,7 @@ package io.seata.tm.api.transaction;
 /**
  * @author guoyao
  */
+//事务钩子
 public interface TransactionHook {
 
     /**

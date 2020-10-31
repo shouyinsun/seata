@@ -15,10 +15,10 @@
  */
 package io.seata.core.codec;
 
+import io.seata.common.loader.EnhancedServiceLoader;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import io.seata.common.loader.EnhancedServiceLoader;
 
 /**
  * The type Codec factory.

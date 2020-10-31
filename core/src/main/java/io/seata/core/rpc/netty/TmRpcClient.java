@@ -42,6 +42,7 @@ import java.util.function.Function;
  * @author slievrly
  * @author zhaojun
  */
+//tm rpc client
 @Sharable
 public final class TmRpcClient extends AbstractRpcRemotingClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(TmRpcClient.class);
@@ -50,7 +51,9 @@ public final class TmRpcClient extends AbstractRpcRemotingClient {
     private static final long KEEP_ALIVE_TIME = Integer.MAX_VALUE;
     private static final int MAX_QUEUE_SIZE = 2000;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
+    //应用id
     private String applicationId;
+    //事务服务组
     private String transactionServiceGroup;
     
     /**
@@ -73,7 +76,9 @@ public final class TmRpcClient extends AbstractRpcRemotingClient {
      */
     public static TmRpcClient getInstance(String applicationId, String transactionServiceGroup) {
         TmRpcClient tmRpcClient = getInstance();
+        //applicationId
         tmRpcClient.setApplicationId(applicationId);
+        //transactionServiceGroup
         tmRpcClient.setTransactionServiceGroup(transactionServiceGroup);
         return tmRpcClient;
     }
@@ -88,6 +93,7 @@ public final class TmRpcClient extends AbstractRpcRemotingClient {
             synchronized (TmRpcClient.class) {
                 if (null == instance) {
                     NettyClientConfig nettyClientConfig = new NettyClientConfig();
+                    //消息executor
                     final ThreadPoolExecutor messageExecutor = new ThreadPoolExecutor(
                         nettyClientConfig.getClientWorkerThreads(), nettyClientConfig.getClientWorkerThreads(),
                         KEEP_ALIVE_TIME, TimeUnit.SECONDS,

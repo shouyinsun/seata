@@ -80,6 +80,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
     /**
      * The Basket map.
      */
+    //address -> BlockingQueue<RpcMessage>
     protected final ConcurrentHashMap<String, BlockingQueue<RpcMessage>> basketMap = new ConcurrentHashMap<>();
 
     private static final long NOT_WRITEABLE_CHECK_MILLS = 10L;
@@ -101,6 +102,8 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
     /**
      * The Merge msg map.
      */
+    // merge 消息映射
+    // msgId -> mergeMessage
     protected final Map<Integer, MergeMessage> mergeMsgMap = new ConcurrentHashMap<>();
     /**
      * The Channel handlers.
@@ -129,6 +132,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
      * Init.
      */
     public void init() {
+        //请求超时check,set result null
         timerExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -234,13 +238,14 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
             Object From big to small: RpcMessage -> MergedWarpMessage -> AbstractMessage
             @see AbstractRpcRemotingClient.MergedSendRunnable
             */
-            if (NettyClientConfig.isEnableClientBatchSendRequest()) {
+            if (NettyClientConfig.isEnableClientBatchSendRequest()) {//批量发送enable
                 ConcurrentHashMap<String, BlockingQueue<RpcMessage>> map = basketMap;
                 BlockingQueue<RpcMessage> basket = map.get(address);
                 if (basket == null) {
                     map.putIfAbsent(address, new LinkedBlockingQueue<>());
                     basket = map.get(address);
                 }
+                //批量发送,先入队列
                 basket.offer(rpcMessage);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("offer message: {}", rpcMessage.getBody());
@@ -252,6 +257,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
                 }
             } else {
                 // the single send.
+                // 单个请求
                 sendSingleRequest(channel, msg, rpcMessage);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("send this msg[{}] by single send.", msg);
@@ -308,6 +314,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
         rpcMessage.setCodec(ProtocolConstants.CONFIGURED_CODEC);
         rpcMessage.setCompressor(ProtocolConstants.CONFIGURED_COMPRESSOR);
         rpcMessage.setBody(msg);
+        //client端 msgId
         rpcMessage.setId(getNextMessageId());
         if (msg instanceof MergeMessage) {
             mergeMsgMap.put(rpcMessage.getId(), (MergeMessage) msg);
@@ -335,6 +342,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
         rpcMessage.setCodec(request.getCodec()); // same with request
         rpcMessage.setCompressor(request.getCompressor());
         rpcMessage.setBody(msg);
+        //response 返回 request的id
         rpcMessage.setId(request.getId());
         channelWritableCheck(channel, msg);
         if (LOGGER.isDebugEnabled()) {
@@ -371,6 +379,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof RpcMessage) {
             final RpcMessage rpcMessage = (RpcMessage) msg;
+            //请求
             if (rpcMessage.getMessageType() == ProtocolConstants.MSGTYPE_RESQUEST
                 || rpcMessage.getMessageType() == ProtocolConstants.MSGTYPE_RESQUEST_ONEWAY) {
                 if (LOGGER.isDebugEnabled()) {
@@ -390,11 +399,14 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
                 } catch (RejectedExecutionException e) {
                     LOGGER.error(FrameworkErrorCode.ThreadPoolFull.getErrCode(),
                         "thread pool is full, current max pool size is " + messageExecutor.getActiveCount());
-                    if (allowDumpStack) {
+                    if (allowDumpStack) {//messageExecutor 已满
+                        // 堆栈 dump
                         String name = ManagementFactory.getRuntimeMXBean().getName();
+                        //pid
                         String pid = name.split("@")[0];
                         int idx = new Random().nextInt(100);
                         try {
+                            //jstack > log文件
                             Runtime.getRuntime().exec("jstack " + pid + " >d:/" + idx + ".log");
                         } catch (IOException exx) {
                             LOGGER.error(exx.getMessage());
@@ -402,7 +414,7 @@ public abstract class AbstractRpcRemoting extends ChannelDuplexHandler implement
                         allowDumpStack = false;
                     }
                 }
-            } else {
+            } else {//response
                 MessageFuture messageFuture = futures.remove(rpcMessage.getId());
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(String

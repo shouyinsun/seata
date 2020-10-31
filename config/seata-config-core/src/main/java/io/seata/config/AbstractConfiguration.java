@@ -25,6 +25,7 @@ import java.time.Duration;
  *
  * @author slievrly
  */
+//配置中心
 public abstract class AbstractConfiguration implements Configuration {
 
     /**

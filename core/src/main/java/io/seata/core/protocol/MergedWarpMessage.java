@@ -24,6 +24,7 @@ import java.util.List;
  *
  * @author slievrly
  */
+//合并的消息
 public class MergedWarpMessage extends AbstractMessage implements Serializable, MergeMessage {
 
     /**

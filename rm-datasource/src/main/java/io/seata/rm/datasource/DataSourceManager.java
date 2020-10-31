@@ -15,12 +15,6 @@
  */
 package io.seata.rm.datasource;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
-
 import io.seata.common.exception.FrameworkException;
 import io.seata.common.exception.NotSupportYetException;
 import io.seata.common.exception.ShouldNeverHappenException;
@@ -48,6 +42,12 @@ import io.seata.rm.datasource.undo.UndoLogManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
+
 import static io.seata.common.exception.FrameworkErrorCode.NoAvailableService;
 
 /**
@@ -55,6 +55,7 @@ import static io.seata.common.exception.FrameworkErrorCode.NoAvailableService;
  *
  * @author sharajava
  */
+//数据源管理,继承AbstractResourceManager
 public class DataSourceManager extends AbstractResourceManager implements Initialize {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceManager.class);
@@ -72,6 +73,7 @@ public class DataSourceManager extends AbstractResourceManager implements Initia
         this.asyncWorker = asyncWorker;
     }
 
+    //查询锁
     @Override
     public boolean lockQuery(BranchType branchType, String resourceId, String xid, String lockKeys)
         throws TransactionException {
@@ -81,10 +83,11 @@ public class DataSourceManager extends AbstractResourceManager implements Initia
             request.setLockKey(lockKeys);
             request.setResourceId(resourceId);
 
-            GlobalLockQueryResponse response = null;
-            if (RootContext.inGlobalTransaction()) {
+            GlobalLockQueryResponse response ;
+            if (RootContext.inGlobalTransaction()) {//在全局事务里
                 response = (GlobalLockQueryResponse)RmRpcClient.getInstance().sendMsgWithResponse(request);
-            } else if (RootContext.requireGlobalLock()) {
+            } else if (RootContext.requireGlobalLock()) {//KEY_GLOBAL_LOCK_FLAG
+                // TX_LOCK 全局锁
                 response = (GlobalLockQueryResponse)RmRpcClient.getInstance().sendMsgWithResponse(loadBalance(),
                     request, NettyClientConfig.getRpcRequestTimeout());
             } else {
@@ -108,8 +111,10 @@ public class DataSourceManager extends AbstractResourceManager implements Initia
     private String loadBalance() {
         InetSocketAddress address = null;
         try {
+            //事务服务组
             List<InetSocketAddress> inetSocketAddressList = RegistryFactory.getInstance().lookup(
                 TmRpcClient.getInstance().getTransactionServiceGroup());
+            //负载策略
             address = LoadBalanceFactory.getInstance().select(inetSocketAddressList);
         } catch (Exception ignore) {
             LOGGER.error(ignore.getMessage());

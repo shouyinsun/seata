@@ -15,16 +15,17 @@
  */
 package io.seata.discovery.loadbalance;
 
+import io.seata.common.loader.LoadLevel;
+
 import java.util.List;
 import java.util.Random;
-
-import io.seata.common.loader.LoadLevel;
 
 /**
  * The type Random load balance.
  *
  * @author yuoyao
  */
+//负载 random
 @LoadLevel(name = "RandomLoadBalance", order = 2)
 public class RandomLoadBalance extends AbstractLoadBalance {
 

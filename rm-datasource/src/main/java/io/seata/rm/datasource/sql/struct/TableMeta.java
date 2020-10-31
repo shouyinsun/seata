@@ -15,34 +15,30 @@
  */
 package io.seata.rm.datasource.sql.struct;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-
 import io.seata.common.exception.NotSupportYetException;
 import io.seata.common.util.CollectionUtils;
 import io.seata.rm.datasource.ColumnUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * The type Table meta.
  *
  * @author sharajava
  */
+//表的元信息
 public class TableMeta {
     private String tableName;
 
     /**
      * key: column name
      */
-    private Map<String, ColumnMeta> allColumns = new LinkedHashMap<String, ColumnMeta>();
+    private Map<String, ColumnMeta> allColumns = new LinkedHashMap();
     /**
      * key: index name
      */
-    private Map<String, IndexMeta> allIndexes = new LinkedHashMap<String, IndexMeta>();
+    private Map<String, IndexMeta> allIndexes = new LinkedHashMap();
 
     /**
      * Gets table name.
@@ -111,10 +107,11 @@ public class TableMeta {
      *
      * @return the primary key map
      */
-    public Map<String, ColumnMeta> getPrimaryKeyMap() {
-        Map<String, ColumnMeta> pk = new HashMap<String, ColumnMeta>();
+    public Map<String, ColumnMeta> getPrimaryKeyMap() {//获取主键
+        Map<String, ColumnMeta> pk = new HashMap();
         for (Entry<String, IndexMeta> entry : allIndexes.entrySet()) {
             IndexMeta index = entry.getValue();
+            //索引类型是 PRIMARY
             if (index.getIndextype().value() == IndexType.PRIMARY.value()) {
                 for (ColumnMeta col : index.getValues()) {
                     pk.put(col.getColumnName(), col);

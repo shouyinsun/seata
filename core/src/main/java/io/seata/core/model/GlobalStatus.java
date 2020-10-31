@@ -23,6 +23,8 @@ import java.util.Map;
  *
  * @author sharajava
  */
+
+//全局状态
 public enum GlobalStatus {
 
     /**

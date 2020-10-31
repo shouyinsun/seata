@@ -20,7 +20,7 @@ package io.seata.common;
  *
  * @author slievrly
  */
-public class XID {
+public class XID {//Xid ip:port:transactionId
 
     private static int port;
 

@@ -24,14 +24,18 @@ import io.seata.rm.datasource.sql.struct.TableRecords;
  *
  * @author sharajava
  */
+//sql undo日志
 public class SQLUndoLog {
 
+    //sql 类型
     private SQLType sqlType;
 
+    //表名
     private String tableName;
 
+    //before镜像
     private TableRecords beforeImage;
-
+    //after镜像
     private TableRecords afterImage;
 
     /**

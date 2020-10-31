@@ -22,6 +22,7 @@ import java.util.List;
  *
  * @author sharajava
  */
+//插入sql识别器
 public interface SQLInsertRecognizer extends SQLRecognizer {
 
     /**

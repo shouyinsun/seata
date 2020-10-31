@@ -69,6 +69,7 @@ public class AppTest {
                     }
                     jdbcTemplate.update("update user0 set name = 'xxx' where id = ?", new Object[]{1});
                     jdbcTemplate.update("insert into user1 (id, name, gmt) values (1, 'user1', '2019-01-01')");
+                    //执行抛异常
                     throw bizException;
                 }
 

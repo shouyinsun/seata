@@ -35,10 +35,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author zhangsen
  */
+//默认 Rm 事件处理器
 public class DefaultRMHandler extends AbstractRMHandler {
 
+    //branchType -> AbstractRMHandler
     protected static Map<BranchType, AbstractRMHandler> allRMHandlersMap
-        = new ConcurrentHashMap<BranchType, AbstractRMHandler>();
+        = new ConcurrentHashMap();
 
     protected DefaultRMHandler() {
         initRMHandlers();

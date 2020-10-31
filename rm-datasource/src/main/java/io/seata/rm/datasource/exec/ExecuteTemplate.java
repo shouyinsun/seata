@@ -28,7 +28,7 @@ import java.sql.Statement;
  *
  * @author sharajava
  */
-public class ExecuteTemplate {
+public class ExecuteTemplate {//执行模板
 
     /**
      * Execute t.
@@ -64,12 +64,14 @@ public class ExecuteTemplate {
                                                      StatementCallback<T, S> statementCallback,
                                                      Object... args) throws SQLException {
 
+        //不在全局事务并且不要求全局锁
         if (!RootContext.inGlobalTransaction() && !RootContext.requireGlobalLock()) {
             // Just work as original statement
+            // 执行源语句
             return statementCallback.execute(statementProxy.getTargetStatement(), args);
         }
 
-        if (sqlRecognizer == null) {
+        if (sqlRecognizer == null) {//sql识别器
             sqlRecognizer = SQLVisitorFactory.get(
                     statementProxy.getTargetSQL(),
                     statementProxy.getConnectionProxy().getDbType());
@@ -78,6 +80,7 @@ public class ExecuteTemplate {
         if (sqlRecognizer == null) {
             executor = new PlainExecutor<>(statementProxy, statementCallback);
         } else {
+            //根据sql类型,生成executor执行器
             switch (sqlRecognizer.getSQLType()) {
                 case INSERT:
                     executor = new InsertExecutor<>(statementProxy, statementCallback, sqlRecognizer);

@@ -22,6 +22,7 @@ import io.seata.common.loader.EnhancedServiceLoader;
  *
  * @author slievrly
  */
+//负载均衡工厂
 public class LoadBalanceFactory {
 
     /**
@@ -30,6 +31,7 @@ public class LoadBalanceFactory {
      * @return the instance
      */
     public static LoadBalance getInstance() {
+        //spi loadBalance 扩展
         LoadBalance loadBalance = EnhancedServiceLoader.load(LoadBalance.class);
         return loadBalance;
     }

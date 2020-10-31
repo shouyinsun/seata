@@ -40,6 +40,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * The type Abstract rpc server.
+ * server 服务器
  *
  * @author slievrly
  */
@@ -52,6 +53,7 @@ public class RpcServer extends AbstractRpcRemotingServer implements ServerMessag
      */
     protected ServerMessageListener serverMessageListener;
 
+    //事务消息处理器
     private TransactionMessageHandler transactionMessageHandler;
     private RegisterCheckAuthHandler checkAuthHandler;
 

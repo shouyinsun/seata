@@ -15,9 +15,6 @@
  */
 package io.seata.saga.rm;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.seata.common.exception.FrameworkErrorCode;
 import io.seata.core.exception.TransactionException;
 import io.seata.core.model.BranchStatus;
@@ -31,6 +28,9 @@ import io.seata.saga.statelang.domain.StateMachineInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Saga resource manager
  *
@@ -43,7 +43,7 @@ public class SagaResourceManager extends AbstractResourceManager {
     /**
      * Saga resource cache
      */
-    private Map<String, Resource> sagaResourceCache = new ConcurrentHashMap<String, Resource>();
+    private Map<String, Resource> sagaResourceCache = new ConcurrentHashMap();
 
     /**
      * Instantiates a new saga resource manager.

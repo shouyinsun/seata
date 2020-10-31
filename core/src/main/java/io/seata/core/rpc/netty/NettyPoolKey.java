@@ -22,9 +22,12 @@ import io.seata.core.protocol.AbstractMessage;
  *
  * @author slievrly
  */
+//netty 池化key
 public class NettyPoolKey {
 
+    //事务角色
     private TransactionRole transactionRole;
+    //地址
     private String address;
     private AbstractMessage message;
 
@@ -128,20 +131,20 @@ public class NettyPoolKey {
     /**
      * The enum Client role.
      */
-    public enum TransactionRole {
+    public enum TransactionRole {//事务角色
 
         /**
          * tm
          */
-        TMROLE(1),
+        TMROLE(1),//TM
         /**
          * rm
          */
-        RMROLE(2),
+        RMROLE(2),//RM
         /**
          * server
          */
-        SERVERROLE(3);
+        SERVERROLE(3);//SERVERROLE
 
         TransactionRole(int value) {
             this.value = value;

@@ -15,12 +15,12 @@
  */
 package io.seata.config;
 
-import java.util.Objects;
-
 import io.seata.common.exception.NotSupportYetException;
 import io.seata.common.loader.EnhancedServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 /**
  * The type Configuration factory.
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author slievrly
  * @author Geng Zhang
  */
+//配置工厂
 public final class ConfigurationFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationFactory.class);
@@ -41,9 +42,11 @@ public final class ConfigurationFactory {
 
     private static final String ENV_SEATA_CONFIG_NAME = "SEATA_CONFIG_NAME";
 
+    //当前文件配置
     public static final Configuration CURRENT_FILE_INSTANCE;
 
     static {
+        //seata.config.name  配置名称
         String seataConfigName = System.getProperty(SYSTEM_PROPERTY_SEATA_CONFIG_NAME);
         if (null == seataConfigName) {
             seataConfigName = System.getenv(ENV_SEATA_CONFIG_NAME);
@@ -51,10 +54,13 @@ public final class ConfigurationFactory {
         if (null == seataConfigName) {
             seataConfigName = REGISTRY_CONF_PREFIX;
         }
+        //env环境
         String envValue = System.getProperty(ENV_PROPERTY_KEY);
         if (null == envValue) {
             envValue = System.getenv(ENV_SYSTEM_KEY);
         }
+        //{seataConfigName}-{envValue}.conf 文件
+        //registry.conf
         Configuration configuration = (null == envValue) ? new FileConfiguration(seataConfigName + REGISTRY_CONF_SUFFIX,
             false) : new FileConfiguration(seataConfigName + "-" + envValue + REGISTRY_CONF_SUFFIX, false);
         Configuration extConfiguration = null;
@@ -73,6 +79,7 @@ public final class ConfigurationFactory {
     private static final String NAME_KEY = "name";
     private static final String FILE_TYPE = "file";
 
+    //配置
     private static volatile Configuration instance = null;
 
     /**
@@ -92,9 +99,10 @@ public final class ConfigurationFactory {
     }
 
     private static Configuration buildConfiguration() {
-        ConfigType configType = null;
+        ConfigType configType ;
         String configTypeName = null;
         try {
+            //config.type  配置中心类型
             configTypeName = CURRENT_FILE_INSTANCE.getConfig(
                 ConfigurationKeys.FILE_ROOT_CONFIG + ConfigurationKeys.FILE_CONFIG_SPLIT_CHAR
                     + ConfigurationKeys.FILE_ROOT_TYPE);
@@ -102,7 +110,8 @@ public final class ConfigurationFactory {
         } catch (Exception e) {
             throw new NotSupportYetException("not support register type: " + configTypeName, e);
         }
-        if (ConfigType.File == configType) {
+        if (ConfigType.File == configType) {//文件类型
+            //config.file.name
             String pathDataId = ConfigurationKeys.FILE_ROOT_CONFIG + ConfigurationKeys.FILE_CONFIG_SPLIT_CHAR
                 + FILE_TYPE + ConfigurationKeys.FILE_CONFIG_SPLIT_CHAR + NAME_KEY;
             String name = CURRENT_FILE_INSTANCE.getConfig(pathDataId);
@@ -119,7 +128,7 @@ public final class ConfigurationFactory {
             }
 
             return null == extConfiguration ? configuration : extConfiguration;
-        } else {
+        } else {//spi load 对应配置中心实现
             return EnhancedServiceLoader.load(ConfigurationProvider.class, Objects.requireNonNull(configType).name())
                 .provide();
         }

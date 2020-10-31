@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author slievrly
  */
+//netty基础配置
 public class NettyBaseConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyBaseConfig.class);
 
@@ -109,16 +110,17 @@ public class NettyBaseConfig {
     static {
         TRANSPORT_PROTOCOL_TYPE = TransportProtocolType.valueOf(CONFIG.getConfig(ConfigurationKeys.TRANSPORT_TYPE, TransportProtocolType.TCP.name()));
         String workerThreadSize = CONFIG.getConfig(ConfigurationKeys.WORKER_THREAD_SIZE);
+        //工作线程数
         if (StringUtils.isNotBlank(workerThreadSize) && StringUtils.isNumeric(workerThreadSize)) {
             WORKER_THREAD_SIZE = Integer.parseInt(workerThreadSize);
-        } else if (null != WorkThreadMode.getModeByName(workerThreadSize)) {
+        } else if (null != WorkThreadMode.getModeByName(workerThreadSize)) {//mode 名称
             WORKER_THREAD_SIZE = WorkThreadMode.getModeByName(workerThreadSize).getValue();
         } else {
             WORKER_THREAD_SIZE = WorkThreadMode.Default.getValue();
         }
         TRANSPORT_SERVER_TYPE = TransportServerType.valueOf(CONFIG.getConfig(ConfigurationKeys.TRANSPORT_SERVER, TransportServerType.NIO.name()));
-        switch (TRANSPORT_SERVER_TYPE) {
-            case NIO:
+        switch (TRANSPORT_SERVER_TYPE) {//传输server类型
+            case NIO://nio
                 if (TRANSPORT_PROTOCOL_TYPE == TransportProtocolType.TCP) {
                     SERVER_CHANNEL_CLAZZ = NioServerSocketChannel.class;
                     CLIENT_CHANNEL_CLAZZ = NioSocketChannel.class;
@@ -128,7 +130,7 @@ public class NettyBaseConfig {
                     CLIENT_CHANNEL_CLAZZ = null;
                 }
                 break;
-            case NATIVE:
+            case NATIVE://native
                 if (PlatformDependent.isWindows()) {
                     throw new IllegalArgumentException("no native supporting for Windows.");
                 } else if (PlatformDependent.isOsx()) {
@@ -143,7 +145,7 @@ public class NettyBaseConfig {
                         SERVER_CHANNEL_CLAZZ = null;
                         CLIENT_CHANNEL_CLAZZ = null;
                     }
-                } else {
+                } else {//epoll
                     if (TRANSPORT_PROTOCOL_TYPE == TransportProtocolType.TCP) {
                         SERVER_CHANNEL_CLAZZ = EpollServerSocketChannel.class;
                         CLIENT_CHANNEL_CLAZZ = EpollSocketChannel.class;
@@ -179,7 +181,7 @@ public class NettyBaseConfig {
     /**
      * The enum Work thread mode.
      */
-    enum WorkThreadMode {
+    enum WorkThreadMode {//工作线程数
 
         /**
          * Auto work thread mode.

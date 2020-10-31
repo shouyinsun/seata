@@ -20,6 +20,7 @@ package io.seata.core.model;
  *
  * @author sharajava
  */
+//资源
 public interface Resource {
 
     /**
@@ -28,7 +29,7 @@ public interface Resource {
      *
      * @return resource group id.
      */
-    String getResourceGroupId();
+    String getResourceGroupId();//资源组id
 
     /**
      * Get the resource id.
@@ -36,13 +37,13 @@ public interface Resource {
      *
      * @return resource id.
      */
-    String getResourceId();
+    String getResourceId();//资源id
 
     /**
      * get resource type, AT, TCC, SAGA and XA
      *
      * @return
      */
-    BranchType getBranchType();
+    BranchType getBranchType();//分支类型
 
 }

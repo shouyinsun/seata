@@ -33,8 +33,10 @@ import java.util.List;
  * @author sharajava
  * @author ggndnn
  */
+//druid sql识别器工厂
 @LoadLevel(name = "druid")
 public class DruidSQLRecognizerFactory implements SQLRecognizerFactory {
+    //根据db类型个sql语句,创建对应的sql识别器
     @Override
     public SQLRecognizer create(String sql, String dbType) {
         List<SQLStatement> asts = SQLUtils.parseStatements(sql, dbType);
@@ -43,15 +45,16 @@ public class DruidSQLRecognizerFactory implements SQLRecognizerFactory {
         }
         SQLRecognizer recognizer = null;
         SQLStatement ast = asts.get(0);
+        //sql操作识别器holder
         SQLOperateRecognizerHolder recognizerHolder =
                 SQLOperateRecognizerHolderFactory.getSQLRecognizerHolder(dbType.toLowerCase());
-        if (ast instanceof SQLInsertStatement) {
+        if (ast instanceof SQLInsertStatement) {//insert statement
             recognizer = recognizerHolder.getInsertRecognizer(sql, ast);
-        } else if (ast instanceof SQLUpdateStatement) {
+        } else if (ast instanceof SQLUpdateStatement) {//update
             recognizer = recognizerHolder.getUpdateRecognizer(sql, ast);
-        } else if (ast instanceof SQLDeleteStatement) {
+        } else if (ast instanceof SQLDeleteStatement) {//delete
             recognizer = recognizerHolder.getDeleteRecognizer(sql, ast);
-        } else if (ast instanceof SQLSelectStatement) {
+        } else if (ast instanceof SQLSelectStatement) {//select
             recognizer = recognizerHolder.getSelectForUpdateRecognizer(sql, ast);
         }
         return recognizer;

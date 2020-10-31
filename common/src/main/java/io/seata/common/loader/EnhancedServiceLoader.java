@@ -15,6 +15,16 @@
  */
 package io.seata.common.loader;
 
+import io.seata.common.Constants;
+import io.seata.common.executor.Initialize;
+import io.seata.common.util.CollectionUtils;
+import io.seata.common.util.IOUtil;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,16 +36,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import io.seata.common.Constants;
-import io.seata.common.executor.Initialize;
-import io.seata.common.util.CollectionUtils;
-import io.seata.common.util.IOUtil;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The type Enhanced service loader.
@@ -202,6 +202,7 @@ public class EnhancedServiceLoader {
                 synchronized (service) {
                     extensions = providers.get(service);
                     if (extensions == null) {
+                        //sort,order递增
                         extensions = findAllExtensionClass(service, activateName, loader);
                         foundFromCache = false;
                         providers.put(service, extensions);
@@ -228,6 +229,8 @@ public class EnhancedServiceLoader {
                     "not found service provider for : " + service.getName() + "[" + activateName
                         + "] and classloader : " + ObjectUtils.toString(loader));
             }
+            //the last one
+            //order 最大
             Class<?> extension = extensions.get(extensions.size() - 1);
             S result = initInstance(service, extension, argTypes, args);
             if (!foundFromCache && LOGGER.isInfoEnabled()) {
@@ -259,6 +262,7 @@ public class EnhancedServiceLoader {
         if (extensions.isEmpty()) {
             return extensions;
         }
+        //sort,order从小到大
         extensions.sort((c1, c2) -> {
             int o1 = 0;
             int o2 = 0;

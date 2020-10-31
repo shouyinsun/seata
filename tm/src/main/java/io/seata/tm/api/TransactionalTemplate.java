@@ -31,6 +31,7 @@ import java.util.List;
  *
  * @author sharajava
  */
+//事务模板
 public class TransactionalTemplate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionalTemplate.class);
@@ -45,9 +46,11 @@ public class TransactionalTemplate {
      */
     public Object execute(TransactionalExecutor business) throws Throwable {
         // 1. get or create a transaction
+        // 1. 获取或创建一个全局事务
         GlobalTransaction tx = GlobalTransactionContext.getCurrentOrCreate();
 
         // 1.1 get transactionInfo
+        // 1.1 事务信息
         TransactionInfo txInfo = business.getTransactionInfo();
         if (txInfo == null) {
             throw new ShouldNeverHappenException("transactionInfo does not exist");
@@ -55,22 +58,27 @@ public class TransactionalTemplate {
         try {
 
             // 2. begin transaction
+            // 2. 开启事务
             beginTransaction(txInfo, tx);
 
-            Object rs = null;
+            Object rs ;
             try {
 
                 // Do Your Business
+                // 业务逻辑
                 rs = business.execute();
 
-            } catch (Throwable ex) {
+            } catch (Throwable ex) {//有异常,捕获
 
                 // 3.the needed business exception to rollback.
+                // 3.回滚
                 completeTransactionAfterThrowing(txInfo,tx,ex);
+                // 执行完,接着抛异常
                 throw ex;
             }
 
             // 4. everything is fine, commit.
+            // 4. 一切正常,commit
             commitTransaction(tx);
 
             return rs;
@@ -83,7 +91,7 @@ public class TransactionalTemplate {
 
     private void completeTransactionAfterThrowing(TransactionInfo txInfo, GlobalTransaction tx, Throwable ex) throws TransactionalExecutor.ExecutionException {
         //roll back
-        if (txInfo != null && txInfo.rollbackOn(ex)) {
+        if (txInfo != null && txInfo.rollbackOn(ex)) {//回滚规则匹配,执行回滚
             try {
                 rollbackTransaction(tx, ex);
             } catch (TransactionException txe) {
@@ -93,6 +101,7 @@ public class TransactionalTemplate {
             }
         } else {
             // not roll back on this exception, so commit
+            // 此异常不会滚,commit
             commitTransaction(tx);
         }
     }
@@ -120,6 +129,7 @@ public class TransactionalTemplate {
     private void beginTransaction(TransactionInfo txInfo, GlobalTransaction tx) throws TransactionalExecutor.ExecutionException {
         try {
             triggerBeforeBegin();
+            //请求xid 并绑定RootContext
             tx.begin(txInfo.getTimeOut(), txInfo.getName());
             triggerAfterBegin();
         } catch (TransactionException txe) {

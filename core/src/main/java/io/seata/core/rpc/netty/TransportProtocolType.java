@@ -20,6 +20,7 @@ package io.seata.core.rpc.netty;
  *
  * @author slievrly
  */
+//传输协议 tcp udp
 public enum TransportProtocolType {
     /**
      * Tcp transport protocol type.

@@ -20,6 +20,7 @@ package io.seata.core.protocol;
  *
  * @author zhangsen
  */
+//交互消息类型
 public class MessageType {
 
     /**

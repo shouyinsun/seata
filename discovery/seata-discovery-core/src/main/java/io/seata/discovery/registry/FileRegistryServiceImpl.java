@@ -82,6 +82,7 @@ public class FileRegistryServiceImpl implements RegistryService<ConfigChangeList
         if (null == clusterName) {
             return null;
         }
+        //service.groupList
         String endpointStr = CONFIG.getConfig(
             PREFIX_SERVICE_ROOT + CONFIG_SPLIT_CHAR + clusterName + POSTFIX_GROUPLIST);
         if (StringUtils.isNullOrEmpty(endpointStr)) {

@@ -74,6 +74,7 @@ public class Server {
         //log store mode : file, db
         SessionHolder.init(parameterParser.getStoreMode());
 
+        //默认协调者
         DefaultCoordinator coordinator = new DefaultCoordinator(rpcServer);
         coordinator.init();
         rpcServer.setHandler(coordinator);

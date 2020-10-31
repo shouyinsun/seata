@@ -24,6 +24,7 @@ import io.seata.core.exception.TransactionException;
  *
  * @author sharajava
  */
+//resourceManager 入站
 public interface ResourceManagerInbound {
 
     /**
@@ -38,6 +39,7 @@ public interface ResourceManagerInbound {
      * @throws TransactionException Any exception that fails this will be wrapped with TransactionException and thrown
      *                              out.
      */
+    //分支事务提交
     BranchStatus branchCommit(BranchType branchType, String xid, long branchId, String resourceId, String applicationData) throws TransactionException;
 
     /**
@@ -52,5 +54,6 @@ public interface ResourceManagerInbound {
      * @throws TransactionException Any exception that fails this will be wrapped with TransactionException and thrown
      *                              out.
      */
+    //分支事务回滚
     BranchStatus branchRollback(BranchType branchType, String xid, long branchId, String resourceId, String applicationData) throws TransactionException;
 }

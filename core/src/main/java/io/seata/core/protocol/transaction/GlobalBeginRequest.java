@@ -23,6 +23,7 @@ import io.seata.core.rpc.RpcContext;
  *
  * @author slievrly
  */
+//全局开始请求
 public class GlobalBeginRequest extends AbstractTransactionRequestToTC {
 
     private int timeout = 60000;

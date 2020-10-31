@@ -53,7 +53,7 @@ public class MessageFuture {
      */
     public Object get(long timeout, TimeUnit unit) throws TimeoutException,
         InterruptedException {
-        Object result = null;
+        Object result ;
         try {
             result = origin.get(timeout, unit);
         } catch (ExecutionException e) {

@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * @author guoyao
  */
+//事务钩子管理器
 public final class TransactionHookManager {
 
     private TransactionHookManager() {

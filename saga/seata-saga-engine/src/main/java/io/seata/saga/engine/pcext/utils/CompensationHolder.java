@@ -15,36 +15,32 @@
  */
 package io.seata.saga.engine.pcext.utils;
 
+import io.seata.common.exception.FrameworkErrorCode;
+import io.seata.common.util.StringUtils;
+import io.seata.saga.engine.exception.EngineExecutionException;
+import io.seata.saga.engine.utils.ExceptionUtils;
+import io.seata.saga.proctrl.ProcessContext;
+import io.seata.saga.statelang.domain.*;
+import io.seata.saga.statelang.domain.impl.AbstractTaskState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.seata.common.exception.FrameworkErrorCode;
-import io.seata.common.util.StringUtils;
-import io.seata.saga.engine.exception.EngineExecutionException;
-import io.seata.saga.engine.utils.ExceptionUtils;
-import io.seata.saga.proctrl.ProcessContext;
-import io.seata.saga.statelang.domain.DomainConstants;
-import io.seata.saga.statelang.domain.ExecutionStatus;
-import io.seata.saga.statelang.domain.State;
-import io.seata.saga.statelang.domain.StateInstance;
-import io.seata.saga.statelang.domain.StateMachine;
-import io.seata.saga.statelang.domain.StateMachineInstance;
-import io.seata.saga.statelang.domain.impl.AbstractTaskState;
-
 /**
  * CompensationHolder
  *
  * @author lorne.cl
  */
-public class CompensationHolder {
+public class CompensationHolder {//补偿holder
 
     /**
      * states need compensation
      * key: stateName
      */
+    //stateName -> StateInstance
     private Map<String, StateInstance> statesNeedCompensation = new ConcurrentHashMap<>();
 
     /**

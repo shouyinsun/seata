@@ -22,6 +22,7 @@ import io.seata.core.rpc.netty.TmRpcClient;
  *
  * @author slievrly
  */
+//tm client
 public class TMClient {
 
     /**
@@ -32,6 +33,7 @@ public class TMClient {
      */
     public static void init(String applicationId, String transactionServiceGroup) {
         TmRpcClient tmRpcClient = TmRpcClient.getInstance(applicationId, transactionServiceGroup);
+        //init,启动netty client
         tmRpcClient.init();
     }
 

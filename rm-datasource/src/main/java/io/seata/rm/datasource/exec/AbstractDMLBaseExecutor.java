@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
  * @param <S> the type parameter
  * @author sharajava
  */
+//抽象dml基础执行器 insert、update、delete
 public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends BaseTransactionalExecutor<T, S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDMLBaseExecutor.class);
@@ -54,9 +55,9 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
     @Override
     public T doExecute(Object... args) throws Throwable {
         AbstractConnectionProxy connectionProxy = statementProxy.getConnectionProxy();
-        if (connectionProxy.getAutoCommit()) {
+        if (connectionProxy.getAutoCommit()) {//自动提交
             return executeAutoCommitTrue(args);
-        } else {
+        } else {//非自动提交
             return executeAutoCommitFalse(args);
         }
     }
@@ -69,9 +70,15 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
      * @throws Exception the exception
      */
     protected T executeAutoCommitFalse(Object[] args) throws Exception {
+        //前后镜像都是表记录
+
+        //前镜像
         TableRecords beforeImage = beforeImage();
+        //statement执行
         T result = statementCallback.execute(statementProxy.getTargetStatement(), args);
+        //后镜像
         TableRecords afterImage = afterImage(beforeImage);
+        //准备undo日志
         prepareUndoLog(beforeImage, afterImage);
         return result;
     }
@@ -86,9 +93,13 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
     protected T executeAutoCommitTrue(Object[] args) throws Throwable {
         ConnectionProxy connectionProxy = statementProxy.getConnectionProxy();
         try {
+            //connection自动提交改为false
             connectionProxy.setAutoCommit(false);
+            //LockRetryPolicy
             return new LockRetryPolicy(connectionProxy.getTargetConnection()).execute(() -> {
+                //executeAutoCommitFalse
                 T result = executeAutoCommitFalse(args);
+                //commit
                 connectionProxy.commit();
                 return result;
             });
@@ -111,6 +122,7 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
      * @return the table records
      * @throws SQLException the sql exception
      */
+    //before镜像
     protected abstract TableRecords beforeImage() throws SQLException;
 
     /**
@@ -120,8 +132,10 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
      * @return the table records
      * @throws SQLException the sql exception
      */
+    //after
     protected abstract TableRecords afterImage(TableRecords beforeImage) throws SQLException;
 
+    //锁重试策略
     private static class LockRetryPolicy extends ConnectionProxy.LockRetryPolicy {
         private final Connection connection;
 
@@ -140,6 +154,7 @@ public abstract class AbstractDMLBaseExecutor<T, S extends Statement> extends Ba
 
         @Override
         protected void onException(Exception e) throws Exception {
+            //异常,回滚
             connection.rollback();
         }
 

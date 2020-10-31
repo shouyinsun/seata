@@ -28,6 +28,7 @@ import java.util.Map;
  *
  * @author slievrly
  */
+//root 上下文
 public class RootContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootContext.class);
@@ -35,12 +36,14 @@ public class RootContext {
     /**
      * The constant KEY_XID.
      */
+    //全局id key
     public static final String KEY_XID = "TX_XID";
 
     public static final String KEY_XID_INTERCEPTOR_TYPE = "tx-xid-interceptor-type";
-
+    //全局锁 key
     public static final String KEY_GLOBAL_LOCK_FLAG = "TX_LOCK";
 
+    //contextCore,可spi扩展,没有spi扩展,使用ThreadLocalContextCore
     private static ContextCore CONTEXT_HOLDER = ContextCoreLoader.load();
 
     /**

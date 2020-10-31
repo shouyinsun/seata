@@ -28,6 +28,7 @@ import io.seata.sqlparser.SQLRecognizer;
  *
  * @author sharajava
  */
+//基础识别器
 public abstract class BaseRecognizer implements SQLRecognizer {
 
     /**

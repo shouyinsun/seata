@@ -15,29 +15,29 @@
  */
 package io.seata.rm.datasource;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import io.seata.common.exception.ShouldNeverHappenException;
 import io.seata.rm.datasource.undo.SQLUndoLog;
+
+import java.util.*;
 
 /**
  * The type Connection context.
  *
  * @author sharajava
  */
+
+//连接上下文
 public class ConnectionContext {
-    private String xid;
-    private Long branchId;
-    private boolean isGlobalLockRequire;
+    private String xid;//全局事务id
+    private Long branchId;//分支id
+    private boolean isGlobalLockRequire;//要求全局锁
 
     /**
      * Table and primary key should not be duplicated.
      */
+    //锁定keys
     private Set<String> lockKeysBuffer = new HashSet<>();
+    //undo 日志
     private List<SQLUndoLog> sqlUndoItemsBuffer = new ArrayList<>();
 
     /**

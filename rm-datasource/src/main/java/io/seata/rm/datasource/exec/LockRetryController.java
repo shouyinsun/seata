@@ -23,10 +23,13 @@ import io.seata.core.constants.ConfigurationKeys;
  *
  * @author sharajava
  */
+//锁定重试控制
 public class LockRetryController {
 
+    //锁重试间隔 默认10ms
     private static int LOCK_RETRY_INTERNAL =
         ConfigurationFactory.getInstance().getInt(ConfigurationKeys.CLIENT_LOCK_RETRY_INTERNAL, 10);
+    //锁重试间隔 默认30次
     private static int LOCK_RETRY_TIMES =
         ConfigurationFactory.getInstance().getInt(ConfigurationKeys.CLIENT_LOCK_RETRY_TIMES, 30);
 

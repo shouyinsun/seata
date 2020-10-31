@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author sharajava
  */
+//tm 单例持有器
 public class TransactionManagerHolder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionManagerHolder.class);
@@ -35,7 +36,7 @@ public class TransactionManagerHolder {
         private static TransactionManager INSTANCE = null;
 
         static {
-            try {
+            try {//spi 获取 TransactionManager
                 INSTANCE = EnhancedServiceLoader.load(TransactionManager.class);
                 LOGGER.info("TransactionManager Singleton {}", INSTANCE);
             } catch (Throwable anyEx) {

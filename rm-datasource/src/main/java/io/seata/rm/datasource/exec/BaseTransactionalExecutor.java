@@ -15,14 +15,6 @@
  */
 package io.seata.rm.datasource.exec;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
-
 import io.seata.common.util.CollectionUtils;
 import io.seata.common.util.StringUtils;
 import io.seata.core.context.RootContext;
@@ -34,11 +26,18 @@ import io.seata.rm.datasource.sql.struct.TableMeta;
 import io.seata.rm.datasource.sql.struct.TableMetaCacheFactory;
 import io.seata.rm.datasource.sql.struct.TableRecords;
 import io.seata.rm.datasource.undo.SQLUndoLog;
-
 import io.seata.sqlparser.ParametersHolder;
 import io.seata.sqlparser.SQLRecognizer;
 import io.seata.sqlparser.SQLType;
 import io.seata.sqlparser.WhereRecognizer;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * The type Base transactional executor.
@@ -48,6 +47,7 @@ import io.seata.sqlparser.WhereRecognizer;
  * @param <T> the type parameter
  * @param <S> the type parameter
  */
+//基本的事务执行器
 public abstract class BaseTransactionalExecutor<T, S extends Statement> implements Executor<T> {
 
     /**
@@ -63,6 +63,7 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
     /**
      * The Sql recognizer.
      */
+    //sql识别器
     protected SQLRecognizer sqlRecognizer;
 
     private TableMeta tableMeta;
@@ -87,7 +88,7 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
             String xid = RootContext.getXID();
             statementProxy.getConnectionProxy().bind(xid);
         }
-
+        //设置是否需要全局锁
         statementProxy.getConnectionProxy().setGlobalLockRequire(RootContext.requireGlobalLock());
         return doExecute(args);
     }
@@ -220,6 +221,7 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
      * @param afterImage  the after image
      * @throws SQLException the sql exception
      */
+    //准备undo日志
     protected void prepareUndoLog(TableRecords beforeImage, TableRecords afterImage) throws SQLException {
         if (beforeImage.getRows().isEmpty() && afterImage.getRows().isEmpty()) {
             return;
@@ -228,9 +230,10 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
         ConnectionProxy connectionProxy = statementProxy.getConnectionProxy();
 
         TableRecords lockKeyRecords = sqlRecognizer.getSQLType() == SQLType.DELETE ? beforeImage : afterImage;
+        //lockKeys
         String lockKeys = buildLockKey(lockKeyRecords);
         connectionProxy.appendLockKey(lockKeys);
-
+        //构建undo类目
         SQLUndoLog sqlUndoLog = buildUndoItem(beforeImage, afterImage);
         connectionProxy.appendUndoLog(sqlUndoLog);
     }
@@ -241,6 +244,7 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
      * @param rowsIncludingPK the records
      * @return the string
      */
+    //tableName:key1,key2,key3
     protected String buildLockKey(TableRecords rowsIncludingPK) {
         if (rowsIncludingPK.size() == 0) {
             return null;
@@ -319,6 +323,7 @@ public abstract class BaseTransactionalExecutor<T, S extends Statement> implemen
      */
     protected TableRecords buildTableRecords(List<Object> pkValues) throws SQLException {
         String pk = getTableMeta().getPkName();
+        //根据主键查询
         StringJoiner pkValuesJoiner = new StringJoiner(" , ",
                 "SELECT * FROM " + getFromTableInSQL() + " WHERE " + pk + " in (", ")");
         for (Object pkValue : pkValues) {

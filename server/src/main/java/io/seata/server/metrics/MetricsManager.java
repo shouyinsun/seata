@@ -15,8 +15,6 @@
  */
 package io.seata.server.metrics;
 
-import java.util.List;
-
 import io.seata.config.ConfigurationFactory;
 import io.seata.core.constants.ConfigurationKeys;
 import io.seata.metrics.exporter.Exporter;
@@ -25,17 +23,21 @@ import io.seata.metrics.registry.Registry;
 import io.seata.metrics.registry.RegistryFactory;
 import io.seata.server.event.EventBusManager;
 
+import java.util.List;
+
 /**
  * Metrics manager for init
  *
  * @author zhengyangyong
  */
 public class MetricsManager {
+    //静态内部类实现单例
     private static class SingletonHolder {
         private static MetricsManager INSTANCE = new MetricsManager();
     }
 
     public static final MetricsManager get() {
+        //只有调用时才会初始化内部类,不占内存
         return MetricsManager.SingletonHolder.INSTANCE;
     }
 
@@ -46,6 +48,7 @@ public class MetricsManager {
     }
 
     public void init() {
+        //metrics.enabled
         boolean enabled = ConfigurationFactory.getInstance().getBoolean(
             ConfigurationKeys.METRICS_PREFIX + ConfigurationKeys.METRICS_ENABLED, false);
         if (enabled) {

@@ -24,6 +24,7 @@ import io.seata.sqlparser.util.JdbcConstants;
 /**
  * @author guoyao
  */
+//表元信息
 public class TableMetaCacheFactory {
 
     private TableMetaCacheFactory() {}

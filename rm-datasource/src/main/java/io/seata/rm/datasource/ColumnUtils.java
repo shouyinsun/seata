@@ -31,7 +31,7 @@ public final class ColumnUtils {
     /**
      * The escape
      */
-    public enum Escape {
+    public enum Escape {//转义char "" 和 `
         /** standard escape */
         STANDARD('"'),
         /** mysql series escape */
@@ -67,6 +67,7 @@ public final class ColumnUtils {
      * @param escape the escape
      * @return delete the column list element left and right escape.
      */
+    //删除左右的转义字符
     public static List<String> delEscape(List<String> cols, Escape escape) {
         if (CollectionUtils.isEmpty(cols)) {
             return cols;

@@ -22,6 +22,7 @@ import java.util.Map;
  *
  * @author sharajava
  */
+//资源管理器
 public interface ResourceManager extends ResourceManagerInbound, ResourceManagerOutbound {
 
     /**
@@ -29,6 +30,7 @@ public interface ResourceManager extends ResourceManagerInbound, ResourceManager
      *
      * @param resource The resource to be managed.
      */
+    //注册资源
     void registerResource(Resource resource);
 
     /**
@@ -36,6 +38,7 @@ public interface ResourceManager extends ResourceManagerInbound, ResourceManager
      *
      * @param resource The resource to be removed.
      */
+    //移除资源
     void unregisterResource(Resource resource);
 
     /**
@@ -43,6 +46,7 @@ public interface ResourceManager extends ResourceManagerInbound, ResourceManager
      *
      * @return resourceId -> Resource Map
      */
+    //resourceId -> Resource
     Map<String, Resource> getManagedResources();
 
     /**
@@ -50,5 +54,6 @@ public interface ResourceManager extends ResourceManagerInbound, ResourceManager
      *
      * @return The BranchType of ResourceManager.
      */
+    //分支事务类型
     BranchType getBranchType();
 }

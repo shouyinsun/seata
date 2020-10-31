@@ -15,15 +15,6 @@
  */
 package io.seata.core.rpc.netty;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -39,6 +30,15 @@ import io.seata.core.rpc.netty.NettyPoolKey.TransactionRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
 import static io.seata.common.Constants.DBKEYS_SPLIT_CHAR;
 
 /**
@@ -47,10 +47,13 @@ import static io.seata.common.Constants.DBKEYS_SPLIT_CHAR;
  * @author slievrly
  * @author zhaojun
  */
+
+//rm rpc client
 @Sharable
 public final class RmRpcClient extends AbstractRpcRemotingClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RmRpcClient.class);
+    //资源管理器
     private ResourceManager resourceManager;
     private static volatile RmRpcClient instance;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
@@ -73,7 +76,9 @@ public final class RmRpcClient extends AbstractRpcRemotingClient {
      */
     public static RmRpcClient getInstance(String applicationId, String transactionServiceGroup) {
         RmRpcClient rmRpcClient = getInstance();
+        //applicationId
         rmRpcClient.setApplicationId(applicationId);
+        //transactionServiceGroup
         rmRpcClient.setTransactionServiceGroup(transactionServiceGroup);
         return rmRpcClient;
     }
@@ -88,6 +93,7 @@ public final class RmRpcClient extends AbstractRpcRemotingClient {
             synchronized (RmRpcClient.class) {
                 if (null == instance) {
                     NettyClientConfig nettyClientConfig = new NettyClientConfig();
+                    //message Executor
                     final ThreadPoolExecutor messageExecutor = new ThreadPoolExecutor(
                         nettyClientConfig.getClientWorkerThreads(), nettyClientConfig.getClientWorkerThreads(),
                         KEEP_ALIVE_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<>(MAX_QUEUE_SIZE),
@@ -144,10 +150,12 @@ public final class RmRpcClient extends AbstractRpcRemotingClient {
     @Override
     protected Function<String, NettyPoolKey> getPoolKeyFunction() {
         return (serverAddress) -> {
+            //mergeResourceKeys
             String resourceIds = getMergedResourceKeys();
             if (null != resourceIds && LOGGER.isInfoEnabled()) {
                 LOGGER.info("RM will register :{}", resourceIds);
             }
+            //registerRMRequest
             RegisterRMRequest message = new RegisterRMRequest(applicationId, transactionServiceGroup);
             message.setResourceIds(resourceIds);
             return new NettyPoolKey(NettyPoolKey.TransactionRole.RMROLE, serverAddress, message);
@@ -210,6 +218,7 @@ public final class RmRpcClient extends AbstractRpcRemotingClient {
         }
     }
 
+    //发送 register消息
     private void sendRegisterMessage(String serverAddress, Channel channel, String resourceId) {
         RegisterRMRequest message = new RegisterRMRequest(applicationId, transactionServiceGroup);
         message.setResourceIds(resourceId);
@@ -229,7 +238,7 @@ public final class RmRpcClient extends AbstractRpcRemotingClient {
         }
     }
 
-    private String getMergedResourceKeys() {
+    private String getMergedResourceKeys() {//merge的资源key,逗号隔开
         Map<String, Resource> managedResources = resourceManager.getManagedResources();
         Set<String> resourceIds = managedResources.keySet();
         if (!resourceIds.isEmpty()) {

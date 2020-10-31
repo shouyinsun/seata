@@ -22,6 +22,7 @@ import java.util.List;
  *
  * @author slievrly
  */
+//负载策略
 public interface LoadBalance {
 
     /**

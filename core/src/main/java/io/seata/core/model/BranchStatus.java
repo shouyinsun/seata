@@ -15,76 +15,87 @@
  */
 package io.seata.core.model;
 
+import io.seata.common.exception.ShouldNeverHappenException;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import io.seata.common.exception.ShouldNeverHappenException;
 
 /**
  * Status of branch transaction.
  *
  * @author sharajava
  */
+//分支状态
 public enum BranchStatus {
 
     /**
      * The Unknown.
      * description:Unknown branch status.
      */
+    //未知
     Unknown(0),
 
     /**
      * The Registered.
      * description:Registered to TC.
      */
+    //注册到tc
     Registered(1),
 
     /**
      * The Phase one done.
      * description:Branch logic is successfully done at phase one.
      */
+    //一阶段成功
     PhaseOne_Done(2),
 
     /**
      * The Phase one failed.
      * description:Branch logic is failed at phase one.
      */
+    //一阶段失败
     PhaseOne_Failed(3),
 
     /**
      * The Phase one timeout.
      * description:Branch logic is NOT reported for a timeout.
      */
+    //一阶段超时
     PhaseOne_Timeout(4),
 
     /**
      * The Phase two committed.
      * description:Commit logic is successfully done at phase two.
      */
+    //二阶段提交
     PhaseTwo_Committed(5),
 
     /**
      * The Phase two commit failed retryable.
      * description:Commit logic is failed but retryable.
      */
+    //二阶段提交失败重试
     PhaseTwo_CommitFailed_Retryable(6),
 
     /**
      * The Phase two commit failed unretryable.
      * description:Commit logic is failed and NOT retryable.
      */
+    //二阶段提交 不重试
     PhaseTwo_CommitFailed_Unretryable(7),
 
     /**
      * The Phase two rollbacked.
      * description:Rollback logic is successfully done at phase two.
      */
+    //二阶段回滚成功
     PhaseTwo_Rollbacked(8),
 
     /**
      * The Phase two rollback failed retryable.
      * description:Rollback logic is failed but retryable.
      */
+    //二阶段回滚 失败重试
     PhaseTwo_RollbackFailed_Retryable(9),
 
     /**

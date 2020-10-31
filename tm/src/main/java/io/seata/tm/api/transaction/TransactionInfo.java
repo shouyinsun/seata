@@ -23,6 +23,7 @@ import java.util.Set;
 /**
  * @author guoyao
  */
+//事务信息
 public final class TransactionInfo implements Serializable {
 
     public static final int DEFAULT_TIME_OUT = 60000;
@@ -31,6 +32,7 @@ public final class TransactionInfo implements Serializable {
 
     private String name;
 
+    //回滚规则
     private Set<RollbackRule> rollbackRules;
 
     public int getTimeOut() {
@@ -59,13 +61,14 @@ public final class TransactionInfo implements Serializable {
 
     public boolean rollbackOn(Throwable ex) {
 
+        //winner 回滚规则
         RollbackRule winner = null;
         int deepest = Integer.MAX_VALUE;
 
         if (CollectionUtils.isNotEmpty(rollbackRules)) {
             winner = NoRollbackRule.DEFAULT_NO_ROLLBACK_RULE;
             for (RollbackRule rule : this.rollbackRules) {
-                int depth = rule.getDepth(ex);
+                int depth = rule.getDepth(ex);//depth>0 并且最小的最匹配
                 if (depth >= 0 && depth < deepest) {
                     deepest = depth;
                     winner = rule;

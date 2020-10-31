@@ -15,6 +15,14 @@
  */
 package io.seata.rm.datasource.exec;
 
+import io.seata.rm.datasource.StatementProxy;
+import io.seata.rm.datasource.sql.struct.Field;
+import io.seata.rm.datasource.sql.struct.TableMeta;
+import io.seata.rm.datasource.sql.struct.TableRecords;
+import io.seata.sqlparser.SQLRecognizer;
+import io.seata.sqlparser.SQLUpdateRecognizer;
+import org.apache.commons.lang.StringUtils;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,15 +30,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-
-import io.seata.rm.datasource.StatementProxy;
-
-import io.seata.sqlparser.SQLRecognizer;
-import io.seata.sqlparser.SQLUpdateRecognizer;
-import io.seata.rm.datasource.sql.struct.Field;
-import io.seata.rm.datasource.sql.struct.TableMeta;
-import io.seata.rm.datasource.sql.struct.TableRecords;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * The type Update executor.
@@ -40,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
  * @param <T> the type parameter
  * @param <S> the type parameter
  */
+//更新执行器
 public class UpdateExecutor<T, S extends Statement> extends AbstractDMLBaseExecutor<T, S> {
 
     /**
@@ -63,18 +63,22 @@ public class UpdateExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
         return buildTableRecords(tmeta, selectSQL, paramAppenderList);
     }
 
+    //前镜像
     private String buildBeforeImageSQL(TableMeta tableMeta, ArrayList<List<Object>> paramAppenderList) {
         SQLUpdateRecognizer recognizer = (SQLUpdateRecognizer)sqlRecognizer;
         List<String> updateColumns = recognizer.getUpdateColumns();
+        //update前镜像,select查询对应的记录
         StringBuilder prefix = new StringBuilder("SELECT ");
-        if (!tableMeta.containsPK(updateColumns)) {
+        if (!tableMeta.containsPK(updateColumns)) {//主键列名
             prefix.append(getColumnNameInSQL(tableMeta.getEscapePkName(getDbType()))).append(", ");
         }
         StringBuilder suffix = new StringBuilder(" FROM ").append(getFromTableInSQL());
+        //更新条件
         String whereCondition = buildWhereCondition(recognizer, paramAppenderList);
         if (StringUtils.isNotBlank(whereCondition)) {
             suffix.append(" WHERE ").append(whereCondition);
         }
+        //for update
         suffix.append(" FOR UPDATE");
         StringJoiner selectSQLJoin = new StringJoiner(", ", prefix.toString(), suffix.toString());
         for (String updateColumn : updateColumns) {
@@ -114,6 +118,7 @@ public class UpdateExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
             // PK should be included.
             prefix.append(getColumnNameInSQL(tableMeta.getEscapePkName(getDbType()))).append(", ");
         }
+        //根据主键查询
         String suffix = " FROM " + getFromTableInSQL() + " WHERE " + buildWhereConditionByPKs(beforeImage.pkRows());
         StringJoiner selectSQLJoiner = new StringJoiner(", ", prefix.toString(), suffix);
         for (String column : updateColumns) {

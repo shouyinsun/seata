@@ -22,9 +22,11 @@ import java.io.Serializable;
 /**
  * @author guoyao
  */
+//回滚规则
 public class RollbackRule implements Serializable {
 
 
+    //回滚异常类
     private final String exceptionName;
 
     public RollbackRule(String exceptionName) {
@@ -50,6 +52,7 @@ public class RollbackRule implements Serializable {
     }
 
 
+    //层次深度,越小越匹配
     public int getDepth(Throwable ex) {
         return getDepth(ex.getClass(), 0);
     }

@@ -22,7 +22,7 @@ import java.util.Date;
  *
  * @author lorne.cl
  */
-public interface StateInstance {
+public interface StateInstance {//state状态实例
 
     /**
      * id

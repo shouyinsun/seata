@@ -15,13 +15,6 @@
  */
 package io.seata.rm.datasource;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import io.seata.common.thread.NamedThreadFactory;
 import io.seata.config.ConfigurationFactory;
 import io.seata.core.constants.ConfigurationKeys;
@@ -31,11 +24,19 @@ import io.seata.rm.DefaultResourceManager;
 import io.seata.rm.datasource.sql.struct.TableMetaCacheFactory;
 import io.seata.rm.datasource.util.JdbcUtils;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * The type Data source proxy.
  *
  * @author sharajava
  */
+//datasource 代理
 public class DataSourceProxy extends AbstractDataSourceProxy implements Resource {
 
     private String resourceGroupId;
@@ -44,6 +45,7 @@ public class DataSourceProxy extends AbstractDataSourceProxy implements Resource
 
     private String jdbcUrl;
 
+    //数据库类型
     private String dbType;
 
     /**
@@ -89,7 +91,7 @@ public class DataSourceProxy extends AbstractDataSourceProxy implements Resource
             throw new IllegalStateException("can not init dataSource", e);
         }
         DefaultResourceManager.get().registerResource(this);
-        if (ENABLE_TABLE_META_CHECKER_ENABLE) {
+        if (ENABLE_TABLE_META_CHECKER_ENABLE) {//db meta信息检查
             tableMetaExcutor.scheduleAtFixedRate(() -> {
                 try (Connection connection = dataSource.getConnection()) {
                     TableMetaCacheFactory.getTableMetaCache(DataSourceProxy.this.getDbType())
@@ -146,7 +148,7 @@ public class DataSourceProxy extends AbstractDataSourceProxy implements Resource
     }
 
     @Override
-    public BranchType getBranchType() {
+    public BranchType getBranchType() {//DataSourceProxy 是AT类型
         return BranchType.AT;
     }
 }

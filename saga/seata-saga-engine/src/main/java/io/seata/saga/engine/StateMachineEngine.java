@@ -15,18 +15,18 @@
  */
 package io.seata.saga.engine;
 
-import java.util.Map;
-
 import io.seata.saga.engine.exception.EngineExecutionException;
 import io.seata.saga.engine.exception.ForwardInvalidException;
 import io.seata.saga.statelang.domain.StateMachineInstance;
+
+import java.util.Map;
 
 /**
  * State machine engine
  *
  * @author lorne.cl
  */
-public interface StateMachineEngine {
+public interface StateMachineEngine {//状态机引擎
 
     /**
      * start a state machine instance

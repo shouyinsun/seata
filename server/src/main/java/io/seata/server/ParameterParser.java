@@ -84,7 +84,7 @@ public class ParameterParser {
         try {
             boolean inContainer = this.isRunningInContainer();
 
-            if (inContainer) {
+            if (inContainer) {//docker容器
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("The server is running in container.");
                 }

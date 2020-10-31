@@ -107,7 +107,7 @@ public abstract class AbstractConnectionProxy implements Connection {
         String dbType = getDbType();
         // support oracle 10.2+
         PreparedStatement targetPreparedStatement = null;
-        if (RootContext.inGlobalTransaction()) {
+        if (RootContext.inGlobalTransaction()) {//有全局事务
             SQLRecognizer sqlRecognizer = SQLVisitorFactory.get(sql, dbType);
             if (sqlRecognizer != null && sqlRecognizer.getSQLType() == SQLType.INSERT) {
                 String tableName = ColumnUtils.delEscape(sqlRecognizer.getTableName(), dbType);

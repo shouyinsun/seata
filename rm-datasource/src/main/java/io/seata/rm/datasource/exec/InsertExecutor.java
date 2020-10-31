@@ -15,6 +15,23 @@
  */
 package io.seata.rm.datasource.exec;
 
+import io.seata.common.exception.NotSupportYetException;
+import io.seata.common.exception.ShouldNeverHappenException;
+import io.seata.common.util.CollectionUtils;
+import io.seata.common.util.StringUtils;
+import io.seata.rm.datasource.PreparedStatementProxy;
+import io.seata.rm.datasource.StatementProxy;
+import io.seata.rm.datasource.sql.struct.ColumnMeta;
+import io.seata.rm.datasource.sql.struct.TableRecords;
+import io.seata.sqlparser.SQLInsertRecognizer;
+import io.seata.sqlparser.SQLRecognizer;
+import io.seata.sqlparser.struct.Null;
+import io.seata.sqlparser.struct.SqlMethodExpr;
+import io.seata.sqlparser.struct.SqlSequenceExpr;
+import io.seata.sqlparser.util.JdbcConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,26 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.seata.common.exception.NotSupportYetException;
-import io.seata.common.exception.ShouldNeverHappenException;
-import io.seata.common.util.CollectionUtils;
-import io.seata.common.util.StringUtils;
-
-import io.seata.rm.datasource.PreparedStatementProxy;
-import io.seata.rm.datasource.StatementProxy;
-import io.seata.rm.datasource.sql.struct.ColumnMeta;
-import io.seata.rm.datasource.sql.struct.TableRecords;
-
-import io.seata.sqlparser.SQLInsertRecognizer;
-import io.seata.sqlparser.SQLRecognizer;
-import io.seata.sqlparser.struct.Null;
-import io.seata.sqlparser.struct.SqlMethodExpr;
-import io.seata.sqlparser.struct.SqlSequenceExpr;
-import io.seata.sqlparser.util.JdbcConstants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The type Insert executor.
  *
@@ -50,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * @param <S> the type parameter
  * @author yuanguoyao
  */
+//插入执行器
 public class InsertExecutor<T, S extends Statement> extends AbstractDMLBaseExecutor<T, S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertExecutor.class);
@@ -69,17 +67,21 @@ public class InsertExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
         super(statementProxy, statementCallback, sqlRecognizer);
     }
 
+    //insert 前镜像empty
     @Override
     protected TableRecords beforeImage() throws SQLException {
         return TableRecords.empty(getTableMeta());
     }
 
+    //insert 后镜像
     @Override
     protected TableRecords afterImage(TableRecords beforeImage) throws SQLException {
         //Pk column exists or PK is just auto generated
+        //主键
         List<Object> pkValues = containsPK() ? getPkValuesByColumn() :
                 (containsColumns() ? getPkValuesByAuto() : getPkValuesByColumn());
 
+        //根据主键构建后镜像
         TableRecords afterImage = buildTableRecords(pkValues);
 
         if (afterImage == null) {
@@ -172,6 +174,7 @@ public class InsertExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
         if (!b) {
             throw new NotSupportYetException(String.format("not support sql [%s]", sqlRecognizer.getOriginalSQL()));
         }
+        //根据序列获取主键
         if (!pkValues.isEmpty() && pkValues.get(0) instanceof SqlSequenceExpr) {
             pkValues = getPkValuesBySequence(pkValues.get(0));
         }
@@ -281,7 +284,7 @@ public class InsertExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
      * @return the primary key value
      * @throws SQLException the SQL exception
      */
-    private List<Object> defaultByAuto() throws SQLException {
+    private List<Object> defaultByAuto() throws SQLException {//自增长主键
         // PK is just auto generated
         Map<String, ColumnMeta> pkMetaMap = getTableMeta().getPrimaryKeyMap();
         if (pkMetaMap.size() != 1) {
@@ -301,6 +304,7 @@ public class InsertExecutor<T, S extends Statement> extends AbstractDMLBaseExecu
             // Statement.executeUpdate() or Connection.prepareStatement().
             if (ERR_SQL_STATE.equalsIgnoreCase(e.getSQLState())) {
                 LOGGER.warn("Fail to get auto-generated keys, use 'SELECT LAST_INSERT_ID()' instead. Be cautious, statement could be polluted. Recommend you set the statement to return generated keys.");
+                //last_insert_id
                 genKeys = statementProxy.getTargetStatement().executeQuery("SELECT LAST_INSERT_ID()");
             } else {
                 throw e;

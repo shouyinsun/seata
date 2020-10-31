@@ -27,6 +27,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @author slievrly
  */
+//服务注册发现服务
 public interface RegistryService<T> {
 
     /**
@@ -97,8 +98,11 @@ public interface RegistryService<T> {
      * @param key service group
      * @return the service group name
      */
+    //service组名称
     default String getServiceGroup(String key) {
+        //配置中心
         Configuration config = ConfigurationFactory.getInstance();
+        //service.vgroup_mapping.{key}
         return config.getConfig(PREFIX_SERVICE_ROOT + CONFIG_SPLIT_CHAR + PREFIX_SERVICE_MAPPING + key);
     }
 }

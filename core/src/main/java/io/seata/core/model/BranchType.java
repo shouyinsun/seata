@@ -20,12 +20,13 @@ package io.seata.core.model;
  *
  * @author sharajava
  */
+//分支类型 AT TCC  SAGA
 public enum BranchType {
 
     /**
      * The At.
      */
-    // AT Branch
+    // AT Branch  Automatic Transaction 本地事务
     AT,
     
     /**

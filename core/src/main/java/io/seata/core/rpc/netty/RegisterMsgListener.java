@@ -23,6 +23,8 @@ import io.seata.core.protocol.AbstractMessage;
  *
  * @author slievrly
  */
+
+//注册消息监听
 public interface RegisterMsgListener {
 
     /**

@@ -35,6 +35,7 @@ public class NettyServerConfig extends NettyBaseConfig {
     private int soBackLogSize = 1024;
     private int writeBufferHighWaterMark = 67108864;
     private int writeBufferLowWaterMark = 1048576;
+    //默认端口8091
     private static final int DEFAULT_LISTEN_PORT = 8091;
     private static final int RPC_REQUEST_TIMEOUT = 30 * 1000;
     private boolean enableServerPooledByteBufAllocator = true;

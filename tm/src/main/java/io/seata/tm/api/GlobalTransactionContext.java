@@ -24,6 +24,7 @@ import io.seata.core.model.GlobalStatus;
  *
  * @author sharajava
  */
+//全局事务 上线文
 public class GlobalTransactionContext {
 
     private GlobalTransactionContext() {
@@ -34,7 +35,7 @@ public class GlobalTransactionContext {
      *
      * @return
      */
-    private static GlobalTransaction createNew() {
+    private static GlobalTransaction createNew() {//创建一个新全局事务
         return new DefaultGlobalTransaction();
     }
 
@@ -48,6 +49,7 @@ public class GlobalTransactionContext {
         if (xid == null) {
             return null;
         }
+        //已有xid,role是Participant
         return new DefaultGlobalTransaction(xid, GlobalStatus.Begin, GlobalTransactionRole.Participant);
     }
 

@@ -22,6 +22,7 @@ import java.util.Objects;
  *
  * @author sharajava
  */
+//列 元信息
 public class ColumnMeta {
     private String tableCat;
     private String tableSchemaName;

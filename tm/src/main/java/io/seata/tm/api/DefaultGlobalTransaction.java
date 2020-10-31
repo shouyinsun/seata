@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author sharajava
  */
+//默认全局事务
 public class DefaultGlobalTransaction implements GlobalTransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultGlobalTransaction.class);
@@ -39,6 +40,7 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
 
     private static final String DEFAULT_GLOBAL_TX_NAME = "default";
 
+    //tm
     private TransactionManager transactionManager;
 
     private String xid;
@@ -57,6 +59,7 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
      * Instantiates a new Default global transaction.
      */
     DefaultGlobalTransaction() {
+        //初始化 Launcher 角色
         this(null, GlobalStatus.UnKnown, GlobalTransactionRole.Launcher);
     }
 
@@ -99,6 +102,7 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
         if (RootContext.getXID() != null) {
             throw new IllegalStateException();
         }
+        //xid 全局事务id
         xid = transactionManager.begin(null, null, name, timeout);
         status = GlobalStatus.Begin;
         RootContext.bind(xid);
@@ -110,7 +114,7 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
 
     @Override
     public void commit() throws TransactionException {
-        if (role == GlobalTransactionRole.Participant) {
+        if (role == GlobalTransactionRole.Participant) {//参与者,不负责提交
             // Participant has no responsibility of committing
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Ignore Commit(): just involved in global transaction [{}]", xid);
@@ -147,6 +151,7 @@ public class DefaultGlobalTransaction implements GlobalTransaction {
 
     @Override
     public void rollback() throws TransactionException {
+        //Participant 角色不负责通知回滚
         if (role == GlobalTransactionRole.Participant) {
             // Participant has no responsibility of rollback
             if (LOGGER.isDebugEnabled()) {

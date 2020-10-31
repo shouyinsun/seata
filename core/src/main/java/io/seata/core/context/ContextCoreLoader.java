@@ -22,14 +22,16 @@ import io.seata.common.loader.EnhancedServiceLoader;
  *
  * @author sharajava
  */
+//spi 加载 contextCore
 public class ContextCoreLoader {
 
+    //静态内部类实现单例
     private static class ContextCoreHolder {
         private static ContextCore instance;
 
         static {
             ContextCore contextCore = EnhancedServiceLoader.load(ContextCore.class);
-            if (contextCore == null) {
+            if (contextCore == null) {//没有spi,默认 ThreadLocalContextCore
                 // Default
                 contextCore = new ThreadLocalContextCore();
             }

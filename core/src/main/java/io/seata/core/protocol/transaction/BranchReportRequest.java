@@ -25,6 +25,7 @@ import io.seata.core.protocol.MessageType;
  *
  * @author slievrly
  */
+//分支上报请求
 public class BranchReportRequest extends AbstractTransactionRequestToTC {
 
     private String xid;

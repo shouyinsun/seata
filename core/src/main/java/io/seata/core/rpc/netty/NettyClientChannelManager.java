@@ -40,18 +40,26 @@ import java.util.stream.Collectors;
  * @author slievrly
  * @author zhaojun
  */
+//netty client 池化管理
 class NettyClientChannelManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyClientChannelManager.class);
-    
+
+    //channel lock map
+    // serverAddr ->Object
     private final ConcurrentMap<String, Object> channelLocks = new ConcurrentHashMap<>();
-    
+    //poolKey map
+    //serverAddr -> poolKey
     private final ConcurrentMap<String, NettyPoolKey> poolKeyMap = new ConcurrentHashMap<>();
-    
+
+    //channel map
+    // addr  -> channel
     private final ConcurrentMap<String, Channel> channels = new ConcurrentHashMap<>();
-    
+
+    //带key的对象池
     private final GenericKeyedObjectPool<NettyPoolKey, Channel> nettyClientKeyPool;
-    
+
+    //池化key function
     private Function<String, NettyPoolKey> poolKeyFunction;
     
     NettyClientChannelManager(final NettyPoolableFactory keyPoolableFactory, final Function<String, NettyPoolKey> poolKeyFunction,
@@ -60,7 +68,8 @@ class NettyClientChannelManager {
         nettyClientKeyPool.setConfig(getNettyPoolConfig(clientConfig));
         this.poolKeyFunction = poolKeyFunction;
     }
-    
+
+    //池化配置
     private GenericKeyedObjectPool.Config getNettyPoolConfig(final NettyClientConfig clientConfig) {
         GenericKeyedObjectPool.Config poolConfig = new GenericKeyedObjectPool.Config();
         poolConfig.maxActive = clientConfig.getMaxPoolActive();
@@ -87,7 +96,7 @@ class NettyClientChannelManager {
      * @param serverAddress server address
      * @return netty channel
      */
-    Channel acquireChannel(String serverAddress) {
+    Channel acquireChannel(String serverAddress) {//获取channel
         Channel channelToServer = channels.get(serverAddress);
         if (channelToServer != null) {
             channelToServer = getExistAliveChannel(channelToServer, serverAddress);
@@ -99,7 +108,7 @@ class NettyClientChannelManager {
             LOGGER.info("will connect to " + serverAddress);
         }
         channelLocks.putIfAbsent(serverAddress, new Object());
-        synchronized (channelLocks.get(serverAddress)) {
+        synchronized (channelLocks.get(serverAddress)) {//reconnect
             return doConnect(serverAddress);
         }
     }
@@ -110,7 +119,7 @@ class NettyClientChannelManager {
      * @param channel channel
      * @param serverAddress server address
      */
-    void releaseChannel(Channel channel, String serverAddress) {
+    void releaseChannel(Channel channel, String serverAddress) {//release channel
         if (null == channel || null == serverAddress) { return; }
         try {
             synchronized (channelLocks.get(serverAddress)) {
@@ -119,12 +128,14 @@ class NettyClientChannelManager {
                     nettyClientKeyPool.returnObject(poolKeyMap.get(serverAddress), channel);
                     return;
                 }
-                if (ch.compareTo(channel) == 0) {
+                if (ch.compareTo(channel) == 0) {//相同
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("return to pool, rm channel:{}", channel);
                     }
+                    //destroy
                     destroyChannel(serverAddress, channel);
                 } else {
+                    //return
                     nettyClientKeyPool.returnObject(poolKeyMap.get(serverAddress), channel);
                 }
             }
@@ -156,8 +167,8 @@ class NettyClientChannelManager {
      *
      * @param transactionServiceGroup transaction service group
      */
-    void reconnect(String transactionServiceGroup) {
-        List<String> availList = null;
+    void reconnect(String transactionServiceGroup) {//reconnect
+        List<String> availList ;
         try {
             availList = getAvailServerList(transactionServiceGroup);
         } catch (Exception e) {
@@ -190,7 +201,7 @@ class NettyClientChannelManager {
         channels.put(serverAddress, channel);
     }
     
-    private Channel doConnect(String serverAddress) {
+    private Channel doConnect(String serverAddress) {//connect
         Channel channelToServer = channels.get(serverAddress);
         if (channelToServer != null && channelToServer.isActive()) {
             return channelToServer;
@@ -199,10 +210,12 @@ class NettyClientChannelManager {
         try {
             NettyPoolKey currentPoolKey = poolKeyFunction.apply(serverAddress);
             NettyPoolKey previousPoolKey = poolKeyMap.putIfAbsent(serverAddress, currentPoolKey);
+            //RegisterRMRequest 注册RM请求
             if (null != previousPoolKey && previousPoolKey.getMessage() instanceof RegisterRMRequest) {
                 RegisterRMRequest registerRMRequest = (RegisterRMRequest) currentPoolKey.getMessage();
                 ((RegisterRMRequest) previousPoolKey.getMessage()).setResourceIds(registerRMRequest.getResourceIds());
             }
+            //borrow
             channelFromPool = nettyClientKeyPool.borrowObject(poolKeyMap.get(serverAddress));
             channels.put(serverAddress, channelFromPool);
         } catch (Exception exx) {
@@ -223,7 +236,8 @@ class NettyClientChannelManager {
                                          .map(NetUtil::toStringAddress)
                                          .collect(Collectors.toList());
     }
-    
+
+    //存在的可用的channel
     private Channel getExistAliveChannel(Channel rmChannel, String serverAddress) {
         if (rmChannel.isActive()) {
             return rmChannel;

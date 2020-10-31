@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author lorne.cl
  */
-public interface State {
+public interface State {//状态机状态
 
     /**
      * name

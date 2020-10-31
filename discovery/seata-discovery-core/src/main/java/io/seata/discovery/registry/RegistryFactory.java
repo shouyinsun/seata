@@ -30,6 +30,7 @@ import java.util.Objects;
  *
  * @author slievrly
  */
+//服务注册发现工厂
 public class RegistryFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistryFactory.class);
 
@@ -40,6 +41,7 @@ public class RegistryFactory {
      */
     public static RegistryService getInstance() {
         RegistryType registryType;
+        //registry.type 注册中心类型
         String registryTypeName = ConfigurationFactory.CURRENT_FILE_INSTANCE.getConfig(
             ConfigurationKeys.FILE_ROOT_REGISTRY + ConfigurationKeys.FILE_CONFIG_SPLIT_CHAR
                 + ConfigurationKeys.FILE_ROOT_TYPE);
@@ -48,9 +50,9 @@ public class RegistryFactory {
         } catch (Exception exx) {
             throw new NotSupportYetException("not support registry type: " + registryTypeName);
         }
-        if (RegistryType.File == registryType) {
+        if (RegistryType.File == registryType) {//文件
             return FileRegistryServiceImpl.getInstance();
-        } else {
+        } else {//spi load 注册发现实现
             return EnhancedServiceLoader.load(RegistryProvider.class, Objects.requireNonNull(registryType).name()).provide();
         }
     }

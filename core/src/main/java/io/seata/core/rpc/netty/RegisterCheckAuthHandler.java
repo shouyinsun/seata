@@ -31,7 +31,7 @@ public interface RegisterCheckAuthHandler {
      * @param request the request
      * @return the boolean
      */
-    boolean regTransactionManagerCheckAuth(RegisterTMRequest request);
+    boolean regTransactionManagerCheckAuth(RegisterTMRequest request);//tm注册check权限
 
     /**
      * Reg resource manager check auth boolean.
@@ -39,5 +39,5 @@ public interface RegisterCheckAuthHandler {
      * @param request the request
      * @return the boolean
      */
-    boolean regResourceManagerCheckAuth(RegisterRMRequest request);
+    boolean regResourceManagerCheckAuth(RegisterRMRequest request);//rm注册check权限
 }

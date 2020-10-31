@@ -51,8 +51,7 @@ public class ChannelManager {
      */
     private static final ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<Integer,
         RpcContext>>>>
-        RM_CHANNELS = new ConcurrentHashMap<String, ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<Integer,
-        RpcContext>>>>();
+        RM_CHANNELS = new ConcurrentHashMap();
 
     /**
      * ip+appname,port

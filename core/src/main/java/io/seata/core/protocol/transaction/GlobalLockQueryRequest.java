@@ -23,6 +23,7 @@ import io.seata.core.rpc.RpcContext;
  *
  * @author slievrly
  */
+//全局锁查询
 public class GlobalLockQueryRequest extends BranchRegisterRequest  {
 
     @Override

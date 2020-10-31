@@ -23,7 +23,7 @@ import java.util.Map;
  * @author jin.xie
  * @author lorne.cl
  */
-public interface ProcessContext {
+public interface ProcessContext {//处理上下文
 
     String VAR_NAME_PROCESS_TYPE = "_ProcessType_";
 

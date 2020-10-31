@@ -20,6 +20,7 @@ package io.seata.config;
  *
  * @author slievrly
  */
+//config配置类型
 public enum ConfigType {
     /**
      * File config type.

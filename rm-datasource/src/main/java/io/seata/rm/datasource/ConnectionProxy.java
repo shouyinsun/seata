@@ -15,10 +15,6 @@
  */
 package io.seata.rm.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.concurrent.Callable;
-
 import io.seata.common.util.StringUtils;
 import io.seata.config.ConfigurationFactory;
 import io.seata.core.constants.ConfigurationKeys;
@@ -34,11 +30,16 @@ import io.seata.rm.datasource.undo.UndoLogManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
+
 /**
  * The type Connection proxy.
  *
  * @author sharajava
  */
+//connection 代理
 public class ConnectionProxy extends AbstractConnectionProxy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionProxy.class);
@@ -105,13 +106,13 @@ public class ConnectionProxy extends AbstractConnectionProxy {
      * @param lockKeys the lockKeys
      * @throws SQLException the sql exception
      */
-    public void checkLock(String lockKeys) throws SQLException {
+    public void checkLock(String lockKeys) throws SQLException {//检查锁
         // Just check lock without requiring lock by now.
         try {
             boolean lockable = DefaultResourceManager.get().lockQuery(BranchType.AT,
                 getDataSourceProxy().getResourceId(), context.getXid(), lockKeys);
-            if (!lockable) {
-                throw new LockConflictException();
+            if (!lockable) {//不能锁定
+                throw new LockConflictException();//锁冲突异常
             }
         } catch (TransactionException e) {
             recognizeLockKeyConflictException(e, lockKeys);
@@ -172,9 +173,10 @@ public class ConnectionProxy extends AbstractConnectionProxy {
     }
 
     @Override
-    public void commit() throws SQLException {
+    public void commit() throws SQLException {//事务提交
         try {
             LOCK_RETRY_POLICY.execute(() -> {
+                //doCommit
                 doCommit();
                 return null;
             });
@@ -186,15 +188,15 @@ public class ConnectionProxy extends AbstractConnectionProxy {
     }
 
     private void doCommit() throws SQLException {
-        if (context.inGlobalTransaction()) {
+        if (context.inGlobalTransaction()) {//在全局事务
             processGlobalTransactionCommit();
-        } else if (context.isGlobalLockRequire()) {
+        } else if (context.isGlobalLockRequire()) {//要求全局锁
             processLocalCommitWithGlobalLocks();
         } else {
             targetConnection.commit();
         }
     }
-
+    //全局锁下,本地commit
     private void processLocalCommitWithGlobalLocks() throws SQLException {
 
         checkLock(context.buildLockKeys());
@@ -208,6 +210,7 @@ public class ConnectionProxy extends AbstractConnectionProxy {
 
     private void processGlobalTransactionCommit() throws SQLException {
         try {
+            //rm 上注册分支事务
             register();
         } catch (TransactionException e) {
             recognizeLockKeyConflictException(e, context.buildLockKeys());
@@ -236,7 +239,7 @@ public class ConnectionProxy extends AbstractConnectionProxy {
     }
 
     @Override
-    public void rollback() throws SQLException {
+    public void rollback() throws SQLException {//事务回滚
         targetConnection.rollback();
         if (context.inGlobalTransaction() && context.isBranchRegistered()) {
             report(false);
@@ -272,18 +275,20 @@ public class ConnectionProxy extends AbstractConnectionProxy {
         }
     }
 
-    public static class LockRetryPolicy {
+    public static class LockRetryPolicy {//锁重试策略
+        //冲突时分支回滚
         protected static final boolean LOCK_RETRY_POLICY_BRANCH_ROLLBACK_ON_CONFLICT = ConfigurationFactory
             .getInstance().getBoolean(ConfigurationKeys.CLIENT_LOCK_RETRY_POLICY_BRANCH_ROLLBACK_ON_CONFLICT, true);
 
         public <T> T execute(Callable<T> callable) throws Exception {
-            if (LOCK_RETRY_POLICY_BRANCH_ROLLBACK_ON_CONFLICT) {
+            if (LOCK_RETRY_POLICY_BRANCH_ROLLBACK_ON_CONFLICT) {//冲突时分支回滚
                 return callable.call();
             } else {
                 return doRetryOnLockConflict(callable);
             }
         }
 
+        //lock冲突时,一直重试
         protected <T> T doRetryOnLockConflict(Callable<T> callable) throws Exception {
             LockRetryController lockRetryController = new LockRetryController();
             while (true) {

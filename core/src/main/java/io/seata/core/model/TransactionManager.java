@@ -24,6 +24,8 @@ import io.seata.core.exception.TransactionException;
  *
  * @author sharajava
  */
+//事务管理器
+// 定义和管理全局事务
 public interface TransactionManager {
 
     /**

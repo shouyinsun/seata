@@ -193,7 +193,7 @@ public class LocalTransactionWithGlobalLockDataSourceBasicTest {
             public void doExecute() {
                 jdbcTemplate.queryForRowSet("select a.name from user0 a where a.id = ? for update", new Object[]{1});
             }
-        };
+        }.execute();
     }
 
     public static class MockDataSourceManager extends DataSourceManager {
@@ -253,17 +253,17 @@ public class LocalTransactionWithGlobalLockDataSourceBasicTest {
                     }
                 });
 
-                boolean exceptionOccour = false;
+                boolean exceptionOccur = false;
                 try {
                     doExecute();
                 } catch (UncategorizedSQLException e) {
-                    exceptionOccour = true;
+                    exceptionOccur = true;
                     Assertions.assertTrue(e.getMessage().contains("LockConflict"), "not lock Conflict exception");
                 } finally {
                     DefaultResourceManager.mockResourceManager(BranchType.AT, new MockDataSourceManager());
                 }
 
-                Assertions.assertTrue(exceptionOccour, "Lock Exception not occur!");
+                Assertions.assertTrue(exceptionOccur, "Lock Exception not occur!");
             }
         }
 

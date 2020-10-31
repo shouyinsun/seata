@@ -50,12 +50,14 @@ import static io.seata.core.constants.ConfigurationKeys.CLIENT_ASYNC_COMMIT_BUFF
  *
  * @author sharajava
  */
+//异步worker
 public class AsyncWorker implements ResourceManagerInbound {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncWorker.class);
 
     private static final int DEFAULT_RESOURCE_SIZE = 16;
 
+    //批量删除undo log size
     private static final int UNDOLOG_DELETE_LIMIT_SIZE = 1000;
 
     private static class Phase2Context {
@@ -104,6 +106,7 @@ public class AsyncWorker implements ResourceManagerInbound {
     private static int ASYNC_COMMIT_BUFFER_LIMIT = ConfigurationFactory.getInstance().getInt(
         CLIENT_ASYNC_COMMIT_BUFFER_LIMIT, 10000);
 
+    //commit异步queue
     private static final BlockingQueue<Phase2Context> ASYNC_COMMIT_BUFFER = new LinkedBlockingQueue<>(
         ASYNC_COMMIT_BUFFER_LIMIT);
 
@@ -121,6 +124,7 @@ public class AsyncWorker implements ResourceManagerInbound {
      */
     public synchronized void init() {
         LOGGER.info("Async Commit Buffer Limit: {}", ASYNC_COMMIT_BUFFER_LIMIT);
+        //1s执行一个commit
         ScheduledExecutorService timerExecutor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("AsyncWorker", 1, true));
         timerExecutor.scheduleAtFixedRate(() -> {
             try {

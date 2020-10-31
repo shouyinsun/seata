@@ -15,19 +15,20 @@
  */
 package io.seata.rm.datasource;
 
+import io.seata.rm.datasource.exec.ExecuteTemplate;
+import io.seata.sqlparser.ParametersHolder;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import io.seata.rm.datasource.exec.ExecuteTemplate;
-import io.seata.sqlparser.ParametersHolder;
 
 /**
  * The type Prepared statement proxy.
  *
  * @author sharajava
  */
+//PreparedStatement代理
 public class PreparedStatementProxy extends AbstractPreparedStatementProxy
     implements PreparedStatement, ParametersHolder {
 
@@ -50,17 +51,17 @@ public class PreparedStatementProxy extends AbstractPreparedStatementProxy
     }
 
     @Override
-    public boolean execute() throws SQLException {
+    public boolean execute() throws SQLException {//execute
         return ExecuteTemplate.execute(this, (statement, args) -> statement.execute());
     }
 
     @Override
-    public ResultSet executeQuery() throws SQLException {
+    public ResultSet executeQuery() throws SQLException {//execute query
         return ExecuteTemplate.execute(this, (statement, args) -> statement.executeQuery());
     }
 
     @Override
-    public int executeUpdate() throws SQLException {
+    public int executeUpdate() throws SQLException {//execute update
         return ExecuteTemplate.execute(this, (statement, args) -> statement.executeUpdate());
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
  *
  * @author sharajava
  */
+//where 识别器
 public interface WhereRecognizer extends SQLRecognizer {
 
     /**

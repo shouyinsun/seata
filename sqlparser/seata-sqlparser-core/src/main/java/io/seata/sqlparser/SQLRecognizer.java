@@ -20,14 +20,14 @@ package io.seata.sqlparser;
  *
  * @author sharajava
  */
-public interface SQLRecognizer {
+public interface SQLRecognizer {//sql识别器
 
     /**
      * Type of the SQL. INSERT/UPDATE/DELETE ...
      *
      * @return sql type
      */
-    SQLType getSQLType();
+    SQLType getSQLType();//sql 类型
 
     /**
      * TableRecords source related in the SQL, including alias if any.
@@ -36,7 +36,7 @@ public interface SQLRecognizer {
      *
      * @return table source.
      */
-    String getTableAlias();
+    String getTableAlias();//获取表别名
 
     /**
      * TableRecords name related in the SQL.
@@ -46,12 +46,12 @@ public interface SQLRecognizer {
      * @return table name.
      * @see #getTableAlias() #getTableAlias()#getTableAlias()
      */
-    String getTableName();
+    String getTableName();//获取表名
 
     /**
      * Return the original SQL input by the upper application.
      *
      * @return The original SQL.
      */
-    String getOriginalSQL();
+    String getOriginalSQL();//源sql
 }

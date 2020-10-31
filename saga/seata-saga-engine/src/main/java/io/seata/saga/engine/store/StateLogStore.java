@@ -15,18 +15,18 @@
  */
 package io.seata.saga.engine.store;
 
-import java.util.List;
-
 import io.seata.saga.proctrl.ProcessContext;
 import io.seata.saga.statelang.domain.StateInstance;
 import io.seata.saga.statelang.domain.StateMachineInstance;
+
+import java.util.List;
 
 /**
  * StateMachine engine log store
  *
  * @author lorne.cl
  */
-public interface StateLogStore {
+public interface StateLogStore {//state 日志
 
     /**
      * Record state machine startup events

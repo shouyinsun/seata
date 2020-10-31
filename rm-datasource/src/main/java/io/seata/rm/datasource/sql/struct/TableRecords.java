@@ -15,32 +15,26 @@
  */
 package io.seata.rm.datasource.sql.struct;
 
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.JDBCType;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import io.seata.common.exception.ShouldNeverHappenException;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialClob;
-
-import io.seata.common.exception.ShouldNeverHappenException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The type Table records.
  *
  * @author sharajava
  */
-public class TableRecords {
+public class TableRecords {//表记录
 
     private transient TableMeta tableMeta;
 
     private String tableName;
 
-    private List<Row> rows = new ArrayList<Row>();
+    private List<Row> rows = new ArrayList();//行记录
 
     /**
      * Gets table name.
@@ -216,6 +210,7 @@ public class TableRecords {
         return records;
     }
 
+    //空的表记录
     public static class EmptyTableRecords extends TableRecords {
 
         public EmptyTableRecords() {}

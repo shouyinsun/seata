@@ -96,7 +96,8 @@ For more details about principle and design, please go to [Seata wiki page](http
 
 ## Documentation
 
-You can view the full documentation from the wiki: [Seata wiki page](https://github.com/seata/seata/wiki).
+
+You can view the full documentation from the wiki: [Seata wiki page](https://seata.io/zh-cn/docs/overview/what-is-seata.html).
 
 ## Reporting bugs
 

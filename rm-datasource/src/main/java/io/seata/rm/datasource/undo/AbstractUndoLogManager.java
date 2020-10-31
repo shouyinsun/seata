@@ -203,8 +203,9 @@ public abstract class AbstractUndoLogManager implements UndoLogManager {
      * @param cp the cp
      * @throws SQLException the sql exception
      */
+    //冲刷 undo log
     @Override
-    public void flushUndoLogs(ConnectionProxy cp) throws SQLException {
+    public void flushUndoLogs(ConnectionProxy cp) throws SQLException {//冲刷undo
         ConnectionContext connectionContext = cp.getContext();
         String xid = connectionContext.getXid();
         long branchId = connectionContext.getBranchId();
@@ -215,12 +216,13 @@ public abstract class AbstractUndoLogManager implements UndoLogManager {
         branchUndoLog.setSqlUndoLogs(connectionContext.getUndoItems());
 
         UndoLogParser parser = UndoLogParserFactory.getInstance();
+        //分支undo日志
         byte[] undoLogContent = parser.encode(branchUndoLog);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Flushing UNDO LOG: {}", new String(undoLogContent, Constants.DEFAULT_CHARSET));
         }
-
+        //插入事务undo日志
         insertUndoLogWithNormal(xid, branchId, buildContext(parser.getName()), undoLogContent,
             cp.getTargetConnection());
     }
